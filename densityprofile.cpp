@@ -59,7 +59,7 @@ double DensityProfile::massAtPoint(const double x, const double y) const
 	double e = lensParameters[9];
 	double b = a*(1-e);
 
-	double pi = 3.14159265;
+	double pi = D_PI;//borrowed from Double.h
 
 	double pixelsize = observationParameters[1];
 
@@ -88,8 +88,8 @@ void DensityProfile::drawPlane()
 		return;
   int N = (int) observationParameters[0];
 
-  Double cSucks(0.0);
-  Plane<Double> * newPlane = new Plane<Double>(N,N,cSucks);
+  Double defaultD(0.0);
+  Plane<Double> * newPlane = new Plane<Double>(N,N,defaultD);
 	if(lensPlane != 0)
 	  {
 	    delete lensPlane;

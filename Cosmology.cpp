@@ -1,8 +1,8 @@
 #include "Cosmology.h"
 
 const double Cosmology::speedOfLight = 3e+10;//centimeters per second
-  const double Cosmology::newtonsConstant = .0000000667;//cm^3 /g /s^2
-  const double Cosmology::solarMass = 2e+33;//Solar mass in grams
+const double Cosmology::newtonsConstant = .0000000667;//cm^3 /g /s^2
+const double Cosmology::solarMass = 2e+33;//Solar mass in grams
 
 double Cosmology::R1(double z,double omega)
 {

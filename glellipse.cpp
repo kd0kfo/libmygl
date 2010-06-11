@@ -109,9 +109,7 @@ math::Complex GLAlgorithm::deflection(double x,double y, double * offset)
   double c,Gn,N,pixelsize;
   try
     {
-      /**
-       * These parameters are need from the file.
-       */
+      //try is used to in case parameters are accidentally not loaded.
       c = observationParameters[5];
       Gn = observationParameters[2];
       N = observationParameters[0];

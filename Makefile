@@ -1,4 +1,4 @@
-COMPILER = g++ -fpermissive -w -D__VERBOSE__ -D__DEBUG__ -static
+COMPILER = g++ -fpermissive -w -D__VERBOSE__ -D__DEBUG__ -static -g
 #COMPILER = c++ -fpermissive -w -D__USE_BOINC__ -D__VERBOSE__ -static
 #COMPILER = c++ -fpermissive -w -D__VERBOSE__ -static
 

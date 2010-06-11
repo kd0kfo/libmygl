@@ -24,8 +24,8 @@ template <class T> Plane<T>::Plane(const Plane<T>& rhs)
   for(int i = 0;i<*rows;i++)
     for(int j = 0;j<*columns;j++)
       {
-			T cSucks = rhs.getValue(i,j);
-			setValue(i,j,cSucks);
+			T getTheValue = rhs.getValue(i,j);
+			setValue(i,j,getTheValue);
       }
 
   if(rhs.getHeader() != 0)
@@ -117,8 +117,8 @@ template <class T> Plane<T>& Plane<T>::operator=(const Plane<T>& rhs)
   for(int i = 0;i<*rows;i++)
     for(int j = 0;j<*columns;j++)
       {
-		T cSucks = rhs.getValue(i,j);
-		setValue(i,j,cSucks);
+		T theStuff = rhs.getValue(i,j);
+		setValue(i,j,theStuff);
       }
   
   if(rhs.getHeader() != 0)

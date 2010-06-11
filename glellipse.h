@@ -17,13 +17,15 @@
 
 
 /** \mainpage Documentation of the Lensing Software.
- * Created By David Coss, 2007
+ * Copyright David Coss 2010
+ * Copying and distributing are permitted under the terms of the GNU Public License version 3(see COPYING or http://www.gnu.org/licenses/gpl.txt).
  */
 
 /**
  * General Lensing Algorithm.
  * This class handles lensing information and calculations.
- * Created By David Coss, 2007
+ * Copyright David Coss 2010
+ * Copying and distributing are permitted under the terms of the GNU Public License version 3(see COPYING or http://www.gnu.org/licenses/gpl.txt).
  */
 class GLAlgorithm
 {
@@ -44,6 +46,8 @@ public:
 	 * @param sourceParameters Source parameters.
 	 * @param density DensityProfile (usually to be calculated by this constructor).
 	 * @param _sourcePlane Plane containing the sources.
+	 * @param glellipseBounds int array that includes the pixel bounds if only a subset is calculated.
+	 * @param offset 2-D array that provides for an offset of the center of the grid. Values should be pixel units.
 	 */
 	GLAlgorithm(double * observationParameters, double * lensParameters, double * sourceParameters, DensityProfile * density, Plane<Double> * _sourcePlane, int * glellipseBounds = 0, double * offset = 0);
 
@@ -53,6 +57,8 @@ public:
 	 * @param density DensityProfile of the lens.
 	 * @param sourceParameters Parameters of the source.
 	 * @param _sourcePlane The sources.
+	 * @param glellipseBounds int array that includes the pixel bounds if only a subset is calculated.
+	 * @param offset 2-D array that provides for an offset of the center of the grid. Values should be pixel units.
 	 */
 	GLAlgorithm(DensityProfile * density, double * sourceParameters, Plane<Double> * _sourcePlane, int * glellipseBounds = 0, double * offset = 0);
 
@@ -62,7 +68,7 @@ public:
 	 * be calculated, saved, and then reused as need. This construct provides deflection planes, via newDeflectionMap, 
 	 * to be used once calculated. Note: the 2 dimensional deflections are stored as Complex numbers with
 	 * the horizontal and vertical deflections as the Real and Imaginary Parts, respectively.
-	 * @param newDeflectionMap Complex Deflections Plane
+	 * @param newDeflectionMap math::Complex Deflections Plane
 	 * @param observationParameters General observation Parameters.
 	 * @param sourceParameters Source Parameters.
 	 * @param _sourcePlane Source Plane.
@@ -92,7 +98,8 @@ public:
 	 *
 	 * @param x horizontal position in pixels from corner (zero indexed).
 	 * @param y vertical position in pixels from corner (zero indexed).
-	 * @return Complex
+	 * @param (x,y) offset of the center in pixels.
+	 * @return math::Complex
 	 */
 	math::Complex deflection(double x,double y, double * offset);
 	

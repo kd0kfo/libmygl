@@ -22,7 +22,8 @@
 /**
  * Density Profile Handler.
  * This Class handles information pertaining to the Deflector, including mass and shape
- * Created By David Coss, 2007
+ * Copyright David Coss 2010
+ * Copying and distributing are permitted under the terms of the GNU Public License version 3(see COPYING or http://www.gnu.org/licenses/gpl.txt).
  */
 class DensityProfile
 {
@@ -67,8 +68,9 @@ public:
 	
 	/**
 	 * Determines whether there is mass at a given point, (x,y).
-	 * @param x double horizontal value.
-	 * @param y double vertical value.
+	 * @param x double horizontal value in pixels.
+	 * @param y double vertical value in pixels.
+	 * @see massAtPoint(const double x, const double y)
 	 * @return bool
 	 */
 	bool isMassAtPoint(const double x, const double y) const;
