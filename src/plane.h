@@ -9,8 +9,9 @@
 #include "EasyBMP/EasyBMP.h"
 #endif
 
-#include "DavidException.h"
-#include "DStack.h"
+#include "libdnstd/DavidException.h"
+#include "libdnstd/DStack.h"
+#include "libdnstd/Double.h"
 
 #include <iostream>
 
@@ -28,7 +29,7 @@
 
 #include <vector>
 
-#include "Double.h"
+
 
 
 

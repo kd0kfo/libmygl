@@ -5,7 +5,7 @@ double SPL::smoothConvergence(const double& mass,const double& distance,const do
   return (mass/(2*D_PI*window*window*Sigma_c))*Double::e(-distance*distance/(2*window*window));
 }
 
-double SPL::bendingAngle(const double& mass, const double& distance, const double& Sigma_c, double window = 1)
+double SPL::bendingAngle(const double& mass, const double& distance, const double& Sigma_c, double window)
 {
 
   double returnMe = mass/(D_PI*distance*Sigma_c);
@@ -13,7 +13,7 @@ double SPL::bendingAngle(const double& mass, const double& distance, const doubl
 
 }
 
-math::Complex SPL::shear(const double& mass, const double& distance,const double& angle, const double& Sigma_c,double window = 1)
+math::Complex SPL::shear(const double& mass, const double& distance,const double& angle, const double& Sigma_c,double window)
 {
   double * shear = new double[2];
   double coeff;

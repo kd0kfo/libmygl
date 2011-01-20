@@ -16,12 +16,12 @@ AC_PROG_RANLIB
 
 AC_ARG_WITH([easybmp],AS_HELP_STRING([--with-easybmp%<:%=path%:>%],[Include EasyBMP library]),with_easybmp=${withval},)
 if test x$with_easybmp != x; then
-   AC_SUBST(EASYBMP_CPPFLAGS,"-I $with_mead/include")
+   AC_SUBST(EASYBMP_CPPFLAGS,"-I$with_mead/include/")
 fi
 
 AC_ARG_WITH([dnstd],AS_HELP_STRING([--with-dnstd],[Include libdnstd]),with_dnstd=${withval},AC_MSG_RESULT(Assuming libdnstd is installed in system paths))
 if test x$with_dnstd != x; then
-   AC_SUBST(DNSTD_CPPFLAGS,"-I $with_dnstd/include")
+   AC_SUBST(DNSTD_CPPFLAGS,"-I$with_dnstd/include/")
 fi
 
 

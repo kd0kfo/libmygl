@@ -22,12 +22,13 @@
 #define DEBUG_PRINT(x)
 #endif
 
-#include "DList.h"
+#include "libndstd/DList.h"
+#include "libndstd/Complex.h"
+#include "libndstd/Double.h"
 
-#include "Complex.h"
-#include "Cosmology.h"
-#include "Double.h"
 #include "spl.h"
+#include "Cosmology.h"
+
 
 /**
  * General Shear Algorithm for use with SPL.

@@ -14,8 +14,8 @@
 #include <math.h>
 #include <iostream>
 
-#include "Double.h"
-#include "Complex.h"
+#include "libdnstd/Double.h"
+#include "libdnstd/Complex.h"
 
 #include "densityprofile.h"
 #include "Cosmology.h"

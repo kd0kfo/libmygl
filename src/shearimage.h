@@ -3,8 +3,9 @@
 
 #include "densityprofile.h"
 #include "plane.h"
-#include "Double.h"
-#include "Complex.h"
+
+#include "libdnstd/Double.h"
+#include "libdnstd/Complex.h"
 
 /**
  * Creates a distorted image plane from given Shear and Convergence maps.

@@ -2,11 +2,11 @@
 #define SPL_CPP
 
 #include "Cosmology.h"
-#include "Double.h"
-#include "Complex.h"
+#include "libdnstd/Double.h"
+#include "libdnstd/Complex.h"
 #include <math.h>
-#include "DTree.h"
-#include "DList.h"
+#include "libdnstd/DTree.h"
+#include "libdnstd/DList.h"
 
 /**
  * Class to handle calculations in smooth particle lensing.

@@ -9,11 +9,12 @@
 #endif
 
 #include "densityprofile.h"
-
-#include "Complex.h"
-#include "Cosmology.h"
-#include "Double.h"
 #include "spl.h"
+
+#include "libdnstd/Complex.h"
+#include "Cosmology.h"
+#include "libdnstd/Double.h"
+
 
 
 /** \mainpage Documentation of the Lensing Software.

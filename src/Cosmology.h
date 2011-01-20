@@ -2,8 +2,8 @@
 #define COSMOLOGY_CPP
 
 #include <math.h>
-#include "DavidException.h"
-#include "Double.h"
+#include "libdnstd/DavidException.h"
+#include "libdnstd/Double.h"
 
 /**
  * Various Comological routines
