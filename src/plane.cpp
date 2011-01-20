@@ -663,3 +663,10 @@ template <> Plane<utils::DStack<Double> > * Plane<utils::DStack<Double> >::subtr
 {
   throw DavidException("DStacks cannont be subtracted from each other", DavidException::DSTACK_ERROR_CODE);
 }
+
+template class Plane<Double>;
+#include "libdnstd/Complex.h"
+template class Plane<math::Complex>;
+#include "libdnstd/DStack.h"
+template class Plane<utils::DStack<Double> >;
+#include "libdnstd/DHashMap.h"

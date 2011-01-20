@@ -55,3 +55,6 @@ template <class T> Plane<T> * PlaneCreator<T>::setPlane(int width, int height,Pl
 
 
 };
+
+
+template class utils::PlaneCreator<Double>;
