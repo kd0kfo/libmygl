@@ -36,8 +36,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = src
-DIST_COMMON = $(libmygl_a_include_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+DIST_COMMON = $(nobase_libmygl_a_include_HEADERS) \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -76,8 +76,8 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(libmygl_a_SOURCES)
 DIST_SOURCES = $(libmygl_a_SOURCES)
-libmygl_a_includeHEADERS_INSTALL = $(INSTALL_HEADER)
-HEADERS = $(libmygl_a_include_HEADERS)
+nobase_libmygl_a_includeHEADERS_INSTALL = $(install_sh_DATA)
+HEADERS = $(nobase_libmygl_a_include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -167,7 +167,7 @@ libmygl_adir = $(libdir)
 libmygl_a_CPPFLAGS = $(EASYBMP_CPPFLAGS) $(DNSTD_CPPFLAGS)
 libmygl_a_SOURCES = Cosmology.cpp densityprofile.cpp glellipse.cpp shearimage.cpp plane.cpp planecreator.cpp spl.cpp glshear.cpp EasyBMP/EasyBMP.cpp
 libmygl_a_includedir = $(includedir)/libmygl
-libmygl_a_include_HEADERS = Cosmology.h densityprofile.h glellipse.h shearimage.h plane.h planecreator.h spl.h glshear.h EasyBMP/EasyBMP.h
+nobase_libmygl_a_include_HEADERS = Cosmology.h densityprofile.h glellipse.h shearimage.h plane.h planecreator.h spl.h glshear.h EasyBMP/EasyBMP.h
 all: all-am
 
 .SUFFIXES:
@@ -391,20 +391,22 @@ libmygl_a-EasyBMP.obj: EasyBMP/EasyBMP.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmygl_a-EasyBMP.obj `if test -f 'EasyBMP/EasyBMP.cpp'; then $(CYGPATH_W) 'EasyBMP/EasyBMP.cpp'; else $(CYGPATH_W) '$(srcdir)/EasyBMP/EasyBMP.cpp'; fi`
 uninstall-info-am:
-install-libmygl_a_includeHEADERS: $(libmygl_a_include_HEADERS)
+install-nobase_libmygl_a_includeHEADERS: $(nobase_libmygl_a_include_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(libmygl_a_includedir)" || $(mkdir_p) "$(DESTDIR)$(libmygl_a_includedir)"
-	@list='$(libmygl_a_include_HEADERS)'; for p in $$list; do \
+	@$(am__vpath_adj_setup) \
+	list='$(nobase_libmygl_a_include_HEADERS)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(libmygl_a_includeHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(libmygl_a_includedir)/$$f'"; \
-	  $(libmygl_a_includeHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(libmygl_a_includedir)/$$f"; \
+	  $(am__vpath_adj) \
+	  echo " $(nobase_libmygl_a_includeHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(libmygl_a_includedir)/$$f'"; \
+	  $(nobase_libmygl_a_includeHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(libmygl_a_includedir)/$$f"; \
 	done
 
-uninstall-libmygl_a_includeHEADERS:
+uninstall-nobase_libmygl_a_includeHEADERS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(libmygl_a_include_HEADERS)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
+	@$(am__vpath_adj_setup) \
+	list='$(nobase_libmygl_a_include_HEADERS)'; for p in $$list; do \
+	  $(am__vpath_adj) \
 	  echo " rm -f '$(DESTDIR)$(libmygl_a_includedir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(libmygl_a_includedir)/$$f"; \
 	done
@@ -536,7 +538,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-libmygl_a_includeHEADERS
+install-data-am: install-nobase_libmygl_a_includeHEADERS
 
 install-exec-am: install-libLIBRARIES
 
@@ -564,20 +566,20 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-info-am uninstall-libLIBRARIES \
-	uninstall-libmygl_a_includeHEADERS
+	uninstall-nobase_libmygl_a_includeHEADERS
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
 	clean-libLIBRARIES ctags distclean distclean-compile \
 	distclean-generic distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-libLIBRARIES \
-	install-libmygl_a_includeHEADERS install-man install-strip \
+	install-info-am install-libLIBRARIES install-man \
+	install-nobase_libmygl_a_includeHEADERS install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-info-am uninstall-libLIBRARIES \
-	uninstall-libmygl_a_includeHEADERS
+	uninstall-nobase_libmygl_a_includeHEADERS
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
