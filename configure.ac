@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.63])
+AC_PREREQ([2.5])
 AC_INIT([My GL], [1.0], [david@davecoss.com])
 AC_CONFIG_SRCDIR([src/])
 AM_CONFIG_HEADER([config.h])
@@ -21,7 +21,7 @@ fi
 
 AC_ARG_WITH([dnstd],AS_HELP_STRING([--with-dnstd],[Include libdnstd]),with_dnstd=${withval},AC_MSG_RESULT(Assuming libdnstd is installed in system paths))
 if test x$with_dnstd != x; then
-   AC_SUBST(DNSTD_CPPFLAGS,"-I$with_dnstd/include/")
+   AC_SUBST(DNSTD_CPPFLAGS,"-I $with_dnstd/include/")
 fi
 
 
