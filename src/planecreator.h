@@ -1,10 +1,10 @@
 #ifndef PLANECREATOR_CPP
 #define PLANECREATOR_CPP
 
-#include "plane.h"
-
 #include "libdnstd/DavidException.h"
+#include "libdnstd/Double.h"
 
+#include "plane.h"
 
 #include <iostream>
 #include <math.h>

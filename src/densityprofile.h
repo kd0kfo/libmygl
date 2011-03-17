@@ -16,8 +16,8 @@
 
 #include "libdnstd/Double.h"
 
-
 #include "plane.h"
+template class Plane<Double>;
 
 /**
  * Density Profile Handler.

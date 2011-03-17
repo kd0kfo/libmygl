@@ -1,11 +1,14 @@
 #ifndef SHEARIMAGE_CPP
 #define SHEARIMAGE_CPP
 
+#include "libdnstd/Double.h"
+#include "libdnstd/Complex.h"
+
 #include "densityprofile.h"
 #include "plane.h"
 
-#include "libdnstd/Double.h"
-#include "libdnstd/Complex.h"
+template class Plane<Double>;
+
 
 /**
  * Creates a distorted image plane from given Shear and Convergence maps.
