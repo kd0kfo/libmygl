@@ -7,9 +7,6 @@
 #include "densityprofile.h"
 #include "plane.h"
 
-template class Plane<Double>;
-
-
 /**
  * Creates a distorted image plane from given Shear and Convergence maps.
  *
