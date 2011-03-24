@@ -70,7 +70,7 @@ public:
 	 */
 	void populate(const T& value);
 	T getValue(const int x, const int y) const;///< gets the value at (x,y).
-	void setValue(int x, int y, T& value);///< setsthe value at (x,y) to value.
+	void setValue(int x, int y, T value);///< setsthe value at (x,y) to value.
 	int numberOfRows() const;///< gives the number of rows as an int.
 	int numberOfColumns() const;///< gives the number of columns as an int.
 	int * getDimensions() const;///< gives rows and columns (in that order) in an array
@@ -415,7 +415,7 @@ template <class T> T Plane<T>::getValue(const int x, const int y) const
   return planeArray[y+x*(*columns)];
 }
 
-template <class T> void Plane<T>::setValue(int x, int y, T& value)
+template <class T> void Plane<T>::setValue(int x, int y, T value)
 {
 
     if(x < 0 || y < 0)
