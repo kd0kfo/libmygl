@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.5])
-AC_INIT([My GL], [1.0], [david@davecoss.com])
+AC_INIT([My GL], [2.0], [david@davecoss.com])
 AC_CONFIG_SRCDIR([src/])
 AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
