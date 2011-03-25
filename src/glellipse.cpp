@@ -1,15 +1,10 @@
+#ifndef GLALGORITHM_CPP
+#define GLALGORITHM_CPP
+
 #ifndef _WIN32
 #import <iostream>
 #endif
 
-#ifdef __DEBUG__
-#define DEBUG_PRINT(x) std::cout << x << std::endl; 
-#else 
-#define DEBUG_PRINT
-#endif
-
-#ifndef GLALGORITHM_CPP
-#define GLALGORITHM_CPP
 
 #include "glellipse.h"
 
@@ -129,10 +124,10 @@ math::Complex GLAlgorithm::deflection(double x,double y, double * offset)
       centiY += offset[1]*pixelsize;
     }
 	
-  int leftBound = -N/2;
-  int rightBound = N/2;
-  int lowerBound = -N/2;
-  int upperBound = N/2;
+  int leftBound = (int)-N/2;
+  int rightBound = (int)N/2;
+  int lowerBound = (int)-N/2;
+  int upperBound = (int)N/2;
   /**/
 
   for(int i = leftBound; i < rightBound;i++)
@@ -201,7 +196,7 @@ Double GLAlgorithm::mapsToSource(double x, double y)
     }
   else
     {
-      int N = observationParameters[0];
+      int N = (int)observationParameters[0];
       int i,j;
       i = Double(newCoords[0]/pixelsize + (N/2)).toInt();
       j = Double(newCoords[1]/pixelsize + (N/2)).toInt();
@@ -255,7 +250,7 @@ bool GLAlgorithm::createDeflectionMapPlane(int _leftBound, int _rightBound, int 
       return false;
     }
 
-  int N = observationParameters[0];
+  int N = (int)observationParameters[0];
 
   if(deflectionMap != 0)
     {

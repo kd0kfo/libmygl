@@ -45,7 +45,7 @@ double DensityProfile::massAtPoint(const double x, const double y) const
   if(lensPlane != 0)
     {
       //std::cout << "Actually used lensplane" << std::endl;
-      return lensPlane->getValue(x,y).doubleValue();
+      return lensPlane->getValue((int)x,(int)y).doubleValue();
     }
 
 	if(observationParameters == 0 || lensParameters == 0)

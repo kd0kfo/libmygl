@@ -3,11 +3,6 @@
 
 #include <iostream>
 
-#ifdef __DEBUG__
-#define DEBUG_PRINT(x) std::cout << x << std::endl; 
-#else 
-#define DEBUG_PRINT
-#endif
 #ifdef __VERBOSE__
 #define VERBOSE_PRINT(x) std::cout << x << std::endl; 
 #else 

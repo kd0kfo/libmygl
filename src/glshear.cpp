@@ -118,10 +118,10 @@ math::Complex GLShear::shear(double x,double y, double * offset)
       centiY += offset[1]*pixelsize;
     }
 	
-  int leftBound = -N/2;
-  int rightBound = N/2;
-  int lowerBound = -N/2;
-  int upperBound = N/2;
+  int leftBound = (int)-N/2;
+  int rightBound = (int)N/2;
+  int lowerBound = (int)-N/2;
+  int upperBound = (int)N/2;
   
   double solarMasses,M,xi,coeff;
   for(int i = leftBound; i < rightBound;i++)
@@ -178,7 +178,7 @@ Double GLShear::mapsToSource(double x, double y)
     }
   else
     {
-      int N = observationParameters[0];
+      int N = (int)observationParameters[0];
       int i,j;
       i = Double(newCoords[0]/pixelsize + (N/2)).toInt();
       j = Double(newCoords[1]/pixelsize + (N/2)).toInt();
@@ -232,7 +232,7 @@ bool GLShear::createShearMapPlane(int _leftBound, int _rightBound, int _lowerBou
       return false;
     }
 
-  int N = observationParameters[0];
+  int N = (int)observationParameters[0];
 
   if(shearMap != 0)
     {

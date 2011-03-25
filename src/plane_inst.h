@@ -9,7 +9,6 @@
 #endif
 
 #include "libdnstd/DavidException.h"
-#include "libdnstd/DString.h"
 #include "libdnstd/Double.h"
 #include "libdnstd/DStack.h"
 
@@ -87,7 +86,7 @@ public:
 	 * @param bgGreen Background Green pixel value
 	 * @param bgBlue Background Blue pixel value
 	 */
-	void draw(const DString& fileName, bool blackAndWhite = false, bool useGrid = false, int gridSpace = 1000,double bgRed = 0, double bgGreen = 0, double bgBlue = 0) throw (DavidException);
+	void draw(const std::string& fileName, bool blackAndWhite = false, bool useGrid = false, int gridSpace = 1000,double bgRed = 0, double bgGreen = 0, double bgBlue = 0) throw (DavidException);
 	
 	std::vector<T> getPlaneArray();///< returns a pointer to the plane's array.
 	
@@ -138,10 +137,10 @@ public:
 	/**
 	 * Saves the plane data as a text file.
 	 * Use this method to save the plane to be used again.
-	 * @param rhs DString string for the file's name
+	 * @param rhs std::string string for the file's name
 	 * @return bool true if the save was successful.
 	 */
-	bool savePlane(const DString& rhs);
+	bool savePlane(const std::string& rhs);
 
 	/**
 	 * Returns a pointer to a plane created based on a file.
@@ -161,7 +160,7 @@ public:
 	 * @return Plane<T>*
 	 * @throws DavidException.
 	 */
-	static Plane<T> * readPlane(const DString& fileName);
+	static Plane<T> * readPlane(const std::string& fileName);
 	
 	/**
 	 * Returns a pointer to a plane created based on a bitmap file.
@@ -178,7 +177,7 @@ public:
 	 * @param fileName
 	 * @return Plane<T>*
 	 */
-	static Plane<Double> * bmpToPlane(const DString& fileName);
+	static Plane<Double> * bmpToPlane(const std::string& fileName);
 	
 	/**
 	 * Adds the values of the two arrays. Returns the Result.
@@ -205,14 +204,14 @@ public:
 	Plane<T> * transpose();
 
 	/**
-	 * Gives the pointer to the DString header
+	 * Gives the pointer to the std::string header
 	 */
-	DString const * const getHeader() const{return header;}
+	std::string const * const getHeader() const{return header;}
 
 	/**
-	 * Sets the DString header value
+	 * Sets the std::string header value
 	 */
-	void setHeader(const DString& newHeader);
+	void setHeader(const std::string& newHeader);
 	
 	/**
 	 * Removes the header, if it exists
@@ -224,42 +223,11 @@ private:
 	int * columns;
 	std::vector<T> planeArray;
 	int numberOfCurves;
-	DString * header;//Plane info if provided, otherwise null pointer
+	std::string * header;//Plane info if provided, otherwise null pointer
 
 		  
 
 };
-
-//specializations
-
-template <> Plane<utils::DStack<DString> > * Plane<utils::DStack<DString> >::subtractPlanes(Plane<utils::DStack<DString> > * left, Plane<utils::DStack<DString> > * right);
-
-template <> Plane<utils::DStack<Double> > * Plane<utils::DStack<Double> >::subtractPlanes(Plane<utils::DStack<Double> > * left, Plane<utils::DStack<Double> > * right);
-
-template <> bool Plane<utils::DStack<DString> >::write(const char * fileName, bool useGrid, bool blackOrWhite, char whiteSymbol);
-
-template <> bool Plane<utils::DStack<Double> >::write(const char * fileName, bool useGrid, bool blackOrWhite, char whiteSymbol);
-
-template <> void Plane<utils::DStack<DString> >::draw(const DString& fileName, bool blackAndWhite, bool useGrid, int gridSpace, double bgRed, double bgGreen, double bgBlue) throw (DavidException);
-
-template <> void Plane<utils::DStack<Double> >::draw(const DString& fileName, bool blackAndWhite, bool useGrid, int gridSpace, double bgRed, double bgGreen, double bgBlue) throw (DavidException);
-
-template <> utils::DStack<DString> Plane<utils::DStack<DString> >::getMinValue();
-
-template <> utils::DStack<Double> Plane<utils::DStack<Double> >::getMinValue();
-
-template <> bool Plane<utils::DStack<DString> >::savePlane(const char * fileName);
-
-template <> bool Plane<utils::DStack<Double> >::savePlane(const char * fileName);
-
-template <> Plane<utils::DStack<DString> > * Plane<utils::DStack<DString> >::readPlane(const DString& fileName);
-
-template <> Plane<utils::DStack<Double> > * Plane<utils::DStack<Double> >::readPlane(const DString& fileName);
-
-template <> utils::DStack<DString> Plane<utils::DStack<DString> >::getMaxValue();
-
-template <> utils::DStack<Double> Plane<utils::DStack<Double> >::getMaxValue();
-//end specializations
 
 template <class T> Plane<T>::Plane()
 {
@@ -290,7 +258,7 @@ template <class T> Plane<T>::Plane(const Plane<T>& rhs)
       }
 
   if(rhs.getHeader() != 0)
-    header = new DString(*(rhs.getHeader()));
+    header = new std::string(*(rhs.header));
   else
     header = 0;
 
@@ -346,10 +314,10 @@ template <class T> Plane<T>::~Plane()
   this->header = 0;
 }
 
-template <class T> void Plane<T>::setHeader(const DString& bean)
+template <class T> void Plane<T>::setHeader(const std::string& bean)
 {
   if(header == 0)
-    header = new DString();
+    header = new std::string();
   
   *header = bean;
 }
@@ -383,7 +351,7 @@ template <class T> Plane<T>& Plane<T>::operator=(const Plane<T>& rhs)
       }
   
   if(rhs.getHeader() != 0)
-    header = new DString(*(rhs.getHeader()));
+    header = new std::string(*(rhs.getHeader()));
   else
     header = 0;
       
@@ -403,12 +371,12 @@ template <class T> T Plane<T>::getValue(const int x, const int y) const
 
   if(x < 0 || y < 0)
     {
-      throw DavidException(DString("These Coordinates (") + Double(x).toDString() + DString(",") + Double(y).toDString() + DString(") are out side of the plane which has dimensions ") + Double(*rows).toDString() + DString(" by ") + Double(*columns).toDString() + ". Negative Values are not allowed",DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
+      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(*rows).str() + std::string(" by ") + Double(*columns).str() + ". Negative Values are not allowed",DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
     }
 	
   if(x > *rows || y > *columns)
     {
-      throw DavidException(DString("These Coordinates (") + Double(x).toDString() + DString(",") + Double(y).toDString() + DString(") are out side of the plane which has dimensions ") + Double(*rows).toDString() + DString(" by ") + Double(*columns).toDString(),DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
+      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(*rows).str() + std::string(" by ") + Double(*columns).str(),DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
     }
   if(planeArray.size() == 0)
     throw DavidException("Plane Array is empty.");
@@ -420,12 +388,12 @@ template <class T> void Plane<T>::setValue(int x, int y, T value)
 
     if(x < 0 || y < 0)
     {
-      throw DavidException(DString("These Coordinates (") + Double(x).toDString() + DString(",") + Double(y).toDString() + DString(") are out side of the plane which has dimensions ") + Double(*rows).toDString() + DString(" by ") + Double(*columns).toDString() + ". Negative Values are not allowed",DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
+      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(*rows).str() + std::string(" by ") + Double(*columns).str() + ". Negative Values are not allowed",DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
     }
 	
   if(x > *rows || y > *columns)
     {
-      throw DavidException(DString("These Coordinates (") + Double(x).toDString() + DString(",") + Double(y).toDString() + DString(") are out side of the plane which has dimensions ") + Double(*rows).toDString() + DString(" by ") + Double(*columns).toDString(),DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
+      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(*rows).str() + std::string(" by ") + Double(*columns).str(),DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
     }
   if(planeArray.size() == 0)
     throw DavidException("Plane Array is empty.");
@@ -498,7 +466,7 @@ template <class T> bool Plane<T>::isInSource(int x, int y, T value)
 	return (this->getValue(x,y) == value);
 }
 
-template <class T> void Plane<T>::draw(const DString& fileName, bool blackAndWhite, bool useGrid, int gridSpace,double bgRed, double bgGreen, double bgBlue) throw (DavidException)
+template <class T> void Plane<T>::draw(const std::string& fileName, bool blackAndWhite, bool useGrid, int gridSpace,double bgRed, double bgGreen, double bgBlue) throw (DavidException)
 {
   #ifndef __USE_BOINC__
 	BMP image;
@@ -539,21 +507,21 @@ template <class T> void Plane<T>::draw(const DString& fileName, bool blackAndWhi
 				      {
 				      case 0:
 					if(!isBackground)
-					  image(i+1,j+1)->Red = currentValue;
+					  image(i+1,j+1)->Red = (int)currentValue;
 					else
-					  image(i+1,j+1)->Red = bgRed;
+					  image(i+1,j+1)->Red = (int)bgRed;
 					break;
 				      case 1:
 					if(!isBackground)
-					  image(i+1,j+1)->Green = currentValue;
+					  image(i+1,j+1)->Green = (int)currentValue;
 					else
-					  image(i+1,j+1)->Green = bgGreen;
+					  image(i+1,j+1)->Green = (int)bgGreen;
 					break;
 				      case 2:
 					if(!isBackground)
-					  image(i+1,j+1)->Blue = currentValue;
+					  image(i+1,j+1)->Blue = (int)currentValue;
 					else
-					  image(i+1,j+1)->Blue = bgBlue;
+					  image(i+1,j+1)->Blue =(int) bgBlue;
 					break;
 				      default:
 					break;
@@ -568,8 +536,8 @@ template <class T> void Plane<T>::draw(const DString& fileName, bool blackAndWhi
 	if(blackAndWhite && image.TellBitDepth() < 16)
 		CreateGrayscaleColorTable(image);
 
-	if(!image.WriteToFile(fileName.toCharArray()))
-	  throw DavidException(DString("Could not write ") + fileName,"EasyBMP Error",DavidException::IO_ERROR_CODE);
+	if(!image.WriteToFile(fileName.c_str()))
+	  throw DavidException(std::string("Could not write ") + fileName,"EasyBMP Error",DavidException::IO_ERROR_CODE);
 	
 
 	std::cout << fileName+" has been written" << std::endl;
@@ -618,7 +586,7 @@ template <class T> T Plane<T>::getTotalValue()
 }
 
 
-template <class T> bool Plane<T>::savePlane(const DString& rhs){return savePlane(rhs.toCharArray());}
+template <class T> bool Plane<T>::savePlane(const std::string& rhs){return savePlane(rhs.c_str());}
 
 template <class T> bool Plane<T>::savePlane(const char * fileName)
 {
@@ -639,12 +607,12 @@ template <class T> bool Plane<T>::savePlane(const char * fileName)
 	  T outputT;
 	  using namespace std;
 	  ostringstream stream;
-	  DString tempString;
+	  std::string tempString;
 	  for(int i = 0;i< *rows;i++)
 	    for(int j = 0;j<*columns;j++)
 		{
 			outputT = getValue(i,j);
-			tempString = outputT.toDString(stream);
+			tempString = outputT.str(stream);
 			file << tempString << endl;
 			stream.str("");
 			stream.clear();
@@ -657,23 +625,23 @@ template <class T> bool Plane<T>::savePlane(const char * fileName)
 }
 
 
-template <class T>  Plane<T> * Plane<T>::readPlane(const char * fileName){DString bean(fileName); return Plane<T>::readPlane(bean);}
+template <class T>  Plane<T> * Plane<T>::readPlane(const std::string& fileName){return Plane<T>::readPlane(fileName.c_str());}
 
-template <class T> Plane<T> * Plane<T>::readPlane(const DString& fileName)
+template <class T> Plane<T> * Plane<T>::readPlane(const char * fileName)
 {
 
 	using namespace std;
-	fstream file (fileName.toCharArray(), ios::in);
+	fstream file (fileName, ios::in);
 	if (file.is_open())
 	{
 		int tmpR,tmpC;
 		char * curr = new char[150];
-		DString string = "#";
-		DString oldheader;
+		std::string string = "#";
+		std::string oldheader;
 		
-		while(string.charAt(0) == '#')
+		while(string.at(0) == '#')
 		  {
-		    if(!string.equals("#")){oldheader += string+"\n";}
+		    if(string != "#"){oldheader += string+"\n";}
 		    file.getline(curr,150);
 		    
 		    string = curr;
@@ -681,9 +649,9 @@ template <class T> Plane<T> * Plane<T>::readPlane(const DString& fileName)
 		tmpR = Double(string).toInt();
 
 		string = "#";
-		while(string.charAt(0) == '#')
+		while(string.at(0) == '#')
 		  {
-		    if(!string.equals("#")){oldheader += string+"\n";}
+		    if(string != "#"){oldheader += string+"\n";}
 		    file.getline(curr,150);
 		    string = curr;
 		  }
@@ -702,14 +670,14 @@ template <class T> Plane<T> * Plane<T>::readPlane(const DString& fileName)
 			{
 			  counter++;
 			  string = "#";
-			  while(string.charAt(0) == '#')
+			  while(string.at(0) == '#')
 			    {
-			      if(!string.equals("#")){oldheader += string + "\n";}
+			      if(string != "#"){oldheader += string + "\n";}
 			      file.getline(curr,150);
 			      string = curr;
 			    }
 			  
-			  T _t = T::parseDString(string);
+			  T _t = T::parseString(string);
 			  newPlanePointer->setValue(i,j,_t);
 			  
 			  if((i*100/endCount) >= (percentFinished+5))
@@ -724,7 +692,7 @@ template <class T> Plane<T> * Plane<T>::readPlane(const DString& fileName)
 		VERBOSE_PRINT("parsing complete");
 
 		if(oldheader != "")
-		  newPlanePointer->setHeader(oldheader.substring(0,oldheader.length()-1));
+		  newPlanePointer->setHeader(oldheader.substr(0,oldheader.size()-1));
 
 		if(counter != tmpR*tmpC)
 		  throw DavidException("Not all or too few of the plane elements have been read.", DavidException::IO_ERROR_CODE);
@@ -733,11 +701,11 @@ template <class T> Plane<T> * Plane<T>::readPlane(const DString& fileName)
 
 	}
 	else
-	  throw DavidException(DString("File Read Error:")+fileName);
+	  throw DavidException(std::string("File Read Error:")+fileName);
 }
 
 
-template <class T> Plane<Double> * Plane<T>::bmpToPlane(const DString& fileName){return bmpToPlane(fileName.getString());}
+template <class T> Plane<Double> * Plane<T>::bmpToPlane(const std::string& fileName){return bmpToPlane(fileName.c_str());}
 
 template <class T> Plane<Double> * Plane<T>::bmpToPlane(const char * fileName)
 {
@@ -782,19 +750,19 @@ template<class T> Plane<T> * Plane<T>::addPlanes(Plane<T> * left, Plane<T> * rig
 
   if(left->numberOfColumns() != right->numberOfColumns())
     {
-      DString errorMessage = "Number of Columns don't match: 2 planes (";
-      errorMessage += Double(left->numberOfRows()).toDString() + "x" + Double(left->numberOfColumns()).toDString();
+      std::string errorMessage = "Number of Columns don't match: 2 planes (";
+      errorMessage += Double(left->numberOfRows()).str() + "x" + Double(left->numberOfColumns()).str();
       errorMessage += ") and (";
-      errorMessage += Double(right->numberOfRows()).toDString() + "x" + Double(right->numberOfColumns()).toDString() + ")";
+      errorMessage += Double(right->numberOfRows()).str() + "x" + Double(right->numberOfColumns()).str() + ")";
       throw DavidException(errorMessage);
     }
 
   if(left->numberOfRows() != right->numberOfRows())
     {
-      DString errorMessage = "Number of Rows don't match: 2 planes (";
-      errorMessage += Double(left->numberOfRows()).toDString() + "x" + Double(left->numberOfColumns()).toDString();
+      std::string errorMessage = "Number of Rows don't match: 2 planes (";
+      errorMessage += Double(left->numberOfRows()).str() + "x" + Double(left->numberOfColumns()).str();
       errorMessage += ") and (";
-      errorMessage += Double(right->numberOfRows()).toDString() + "x" + Double(right->numberOfColumns()).toDString() + ")";
+      errorMessage += Double(right->numberOfRows()).str() + "x" + Double(right->numberOfColumns()).str() + ")";
       throw DavidException(errorMessage);
     }
 

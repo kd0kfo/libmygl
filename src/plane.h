@@ -8,10 +8,7 @@
 
 #include "plane_inst.h"
 
-template class utils::DStack<Double>;
-template class std::vector<utils::DStack<Double> >;
 template class Plane<Double>;
-template class Plane<utils::DStack<Double> >;
 template class Plane<math::Complex>;
 #endif
 

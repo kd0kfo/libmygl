@@ -2,12 +2,6 @@
 #include <iostream>
 
 
-#ifdef __DEBUG__
-#define DEBUG_PRINT(x) std::cout << x std::endl;
-#else
-#define DEBUG_PRINT(x)
-#endif
-
 #include "densityprofile.h"
 #include "spl.h"
 
