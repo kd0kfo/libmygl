@@ -108,12 +108,12 @@ public:
 	/**
 	 * Gives the maximum value in the plane.
 	 */
-	T getMaxValue();
+	T getMaxValue()const;
 
 	/**
 	 * Give the minimum value in the plane
 	 */
-	T getMinValue();
+	T getMinValue()const;
 
 	/**
 	 * Draws a curve of given specifications.
@@ -123,7 +123,7 @@ public:
 	/**
 	 * Gives the sum of all values in the plane.
 	 */
-	T getTotalValue();
+	T getTotalValue()const;
 
 	/**
 	 * Saves the plane data as a text file.
@@ -545,7 +545,7 @@ template <class T> void Plane<T>::draw(const std::string& fileName, bool blackAn
 	return;
 }
 
-template <class T> T Plane<T>::getMaxValue()
+template <class T> T Plane<T>::getMaxValue()const
 {
   T returnMe = getValue(0,0);
   for(int i = 0;i < *rows; i++)
@@ -556,7 +556,7 @@ template <class T> T Plane<T>::getMaxValue()
   return returnMe;
 }
 
-template <class T> T Plane<T>::getMinValue()
+template <class T> T Plane<T>::getMinValue()const
 {
   T returnMe = getValue(0,0);
   for(int i = 0;i < *rows; i++)
@@ -573,7 +573,7 @@ template <class T> bool Plane<T>::includeCurve(bool useCurve,double x, double y,
 
 }
 
-template <class T> T Plane<T>::getTotalValue()
+template <class T> T Plane<T>::getTotalValue()const
 {
 	T returnMe;
 

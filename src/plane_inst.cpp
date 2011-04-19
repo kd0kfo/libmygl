@@ -60,12 +60,12 @@ template <> Plane<utils::DStack<Double> > * Plane<utils::DStack<Double> >::readP
   throw DavidException("DStacks cannot be saved.", DavidException::DSTACK_ERROR_CODE);
 }
 
-template <> utils::DStack<DString> Plane<utils::DStack<DString> >::getMaxValue()
+template <> utils::DStack<DString> Plane<utils::DStack<DString> >::getMaxValue()const
 {
   throw DavidException("Maximum value makes no sense with a DStack",DavidException::DSTACK_ERROR_CODE);
 }
 
-template <> utils::DStack<Double> Plane<utils::DStack<Double> >::getMaxValue()
+template <> utils::DStack<Double> Plane<utils::DStack<Double> >::getMaxValue()const
 {
   throw DavidException("Maximum value makes no sense with a DStack",DavidException::DSTACK_ERROR_CODE);
 }
