@@ -4,7 +4,6 @@
 #include <vector>
 #include "libdnstd/Complex.h"
 #include "libdnstd/Double.h"
-#include "libdnstd/DStack.h"
 
 #include "plane_inst.h"
 

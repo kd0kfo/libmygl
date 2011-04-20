@@ -10,7 +10,6 @@
 
 #include "libdnstd/DavidException.h"
 #include "libdnstd/Double.h"
-#include "libdnstd/DStack.h"
 
 #include <iostream>
 #include <vector>
@@ -68,7 +67,7 @@ public:
 	 * Fills the entire plane with the given value.
 	 */
 	void populate(const T& value);
-	T getValue(const int x, const int y) const;///< gets the value at (x,y).
+	const T& getValue(const int x, const int y) const;///< gets the value at (x,y).
 	void setValue(int x, int y, T value);///< setsthe value at (x,y) to value.
 	int numberOfRows() const;///< gives the number of rows as an int.
 	int numberOfColumns() const;///< gives the number of columns as an int.
@@ -366,7 +365,7 @@ template <class T> void Plane<T>::populate(const T& value)
 			this->setValue(i,j,newValue);
 }
 
-template <class T> T Plane<T>::getValue(const int x, const int y) const
+template <class T> const T& Plane<T>::getValue(const int x, const int y) const
 {
 
   if(x < 0 || y < 0)

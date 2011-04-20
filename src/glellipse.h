@@ -3,7 +3,7 @@
 
 
 #include "densityprofile.h"
-#include "spl.h"
+//#include "spl.h"
 
 #include "libdnstd/Complex.h"
 #include "Cosmology.h"
