@@ -2,7 +2,7 @@
 #define GLALGORITHM_CPP
 
 #ifndef _WIN32
-#import <iostream>
+#include <iostream>
 #endif
 
 

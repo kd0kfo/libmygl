@@ -2,7 +2,7 @@
 #define GLSHEAR_CPP
 
 #ifndef _WIN32
-#import <iostream>
+#include <iostream>
 #endif
 
 #ifdef __DEBUG__

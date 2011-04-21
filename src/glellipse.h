@@ -1,3 +1,6 @@
+#ifndef GLELLIPSE_H
+#define GLELLIPSE_H 1
+
 #include <math.h>
 #include <iostream>
 
@@ -151,3 +154,7 @@ private:
 	Plane<math::Complex> * deflectionMap;
 	Plane<Double> * sourcePlane;
 };
+
+#endif //GLELLIPSE_H
+
+
