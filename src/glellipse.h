@@ -47,7 +47,7 @@ public:
 	 * @param glellipseBounds int array that includes the pixel bounds if only a subset is calculated.
 	 * @param offset 2-D array that provides for an offset of the center of the grid. Values should be pixel units.
 	 */
-	GLAlgorithm(double * observationParameters, double * lensParameters, double * sourceParameters, DensityProfile * density, Plane<Double> * _sourcePlane, int * glellipseBounds = 0, double * offset = 0);
+	GLAlgorithm(const struct general_parameters *observationParameters, const struct lens_parameters *lensParameters, std::vector<struct source_parameters> *sourceParameters, DensityProfile * density, Plane<Double> * _sourcePlane, int * glellipseBounds = 0, double * offset = 0);
 
 	/**
 	 * Lens Density and Source based constructor.
@@ -58,7 +58,7 @@ public:
 	 * @param glellipseBounds int array that includes the pixel bounds if only a subset is calculated.
 	 * @param offset 2-D array that provides for an offset of the center of the grid. Values should be pixel units.
 	 */
-	GLAlgorithm(DensityProfile * density, double * sourceParameters, Plane<Double> * _sourcePlane, int * glellipseBounds = 0, double * offset = 0);
+	GLAlgorithm(DensityProfile * density, std::vector<struct source_parameters> * sourceParameters, Plane<Double> * _sourcePlane, int * glellipseBounds = 0, double * offset = 0);
 
 	/**
 	 * Deflection angle array based constructor.
@@ -71,7 +71,7 @@ public:
 	 * @param sourceParameters Source Parameters.
 	 * @param _sourcePlane Source Plane.
 	 */
-	GLAlgorithm(Plane<math::Complex> * newDeflectionMap, double * observationParameters, double * sourceParameters, Plane<Double> * _sourcePlane);
+	GLAlgorithm(Plane<math::Complex> * newDeflectionMap, double * observationParameters, std::vector<struct source_parameters> * sourceParameters, Plane<Double> * _sourcePlane);
 
 	/**
 	 * Destructor.
@@ -147,12 +147,12 @@ public:
 	Plane<math::Complex> * getDeflectionPlane(){return deflectionMap;}
 
 private:
-	double * observationParameters;
-	double * lensParameters;
-	double * sourceParameters;
-	DensityProfile * massDensity;
-	Plane<math::Complex> * deflectionMap;
-	Plane<Double> * sourcePlane;
+	const struct general_parameters *observationParameters;
+	const struct lens_parameters *lensParameters;
+	std::vector<struct source_parameters> *sourceParameters;
+	DensityProfile *massDensity;
+	Plane<math::Complex> *deflectionMap;
+	Plane<Double> *sourcePlane;
 };
 
 #endif //GLELLIPSE_H

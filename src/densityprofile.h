@@ -1,16 +1,12 @@
-#ifndef DENSITYPROFILE_CPP
-#define DENSITYPROFILE_CPP
+#ifndef DENSITYPROFILE_H
+#define DENSITYPROFILE_H 1
 
 #include <iostream>
 
-#ifdef __VERBOSE__
-#define VERBOSE_PRINT(x) std::cout << x << std::endl; 
-#else 
-#define VERBOSE_PRINT(x)
-#endif
-
 #include "libdnstd/Double.h"
+
 #include "plane.h"
+#include "structs.h"
 
 /**
  * Density Profile Handler.
@@ -36,7 +32,7 @@ public:
 	 * @see ray_trace_ellipse for simulation setup
 	 * @param observationParameters General Parameters
 	 */
-	DensityProfile(Plane<Double> * newPlane, double * lensParameters, double * observationParameters);
+	DensityProfile(Plane<Double> * newPlane, const struct lens_parameters *lensParameters, const struct general_parameters *observationParameters);
 
 	/**
 	 * Destructor.
@@ -97,13 +93,13 @@ public:
 	void drawPlane();
 	
 	bool clearAllFields();///< deletes everything. sets all pointers equal to zero. BE CAREFUL!!!
-	double * getObservationParameters(){return observationParameters;}
-	double * getLensParameters(){return lensParameters;}
+	const struct general_parameters* getObservationParameters(){return observationParameters;}
+	const struct lens_parameters* getLensParameters(){return lensParameters;}
 
 private:
 	Plane<Double> * lensPlane;
-	double * observationParameters;
-	double * lensParameters;
+	const struct general_parameters* observationParameters;
+	const struct lens_parameters* lensParameters;
 
 
 };
