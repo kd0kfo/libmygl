@@ -149,7 +149,7 @@ public:
 private:
 	const struct general_parameters *observationParameters;
 	const struct lens_parameters *lensParameters;
-	std::vector<struct source_parameters> *sourceParameters;
+	const std::vector<struct source_parameters> *sourceParameters;
 	DensityProfile *massDensity;
 	Plane<math::Complex> *deflectionMap;
 	Plane<Double> *sourcePlane;

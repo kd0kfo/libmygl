@@ -19,7 +19,7 @@ GLAlgorithm::GLAlgorithm()
 
 }
 
-GLAlgorithm::GLAlgorithm(double * observationParameters, double * lensParameters, double * sourceParameters, DensityProfile * density, Plane<Double> * _sourcePlane, int * glellipseBounds, double * offset)
+GLAlgorithm::GLAlgorithm(const struct general_parameters *observationParameters, const struct lens_parameters *lensParameters, const std::vector<struct source_parameters> *sourceParameters, DensityProfile * density, Plane<Double> * _sourcePlane, int * glellipseBounds, double * offset)
 {
   this->observationParameters = observationParameters;
   this->lensParameters = lensParameters;
@@ -33,7 +33,7 @@ GLAlgorithm::GLAlgorithm(double * observationParameters, double * lensParameters
   sourcePlane = _sourcePlane;
 }
 
-GLAlgorithm::GLAlgorithm(DensityProfile * density, double * newSourceParameters, Plane<Double> * _sourcePlane, int * glellipseBounds, double * offset)
+GLAlgorithm::GLAlgorithm(DensityProfile * density, const std::vector<struct source_parameters> *newSourceParameters, Plane<Double> * _sourcePlane, int * glellipseBounds, double * offset)
 {
   observationParameters = density->getObservationParameters();
   lensParameters = density->getLensParameters();
@@ -47,12 +47,12 @@ GLAlgorithm::GLAlgorithm(DensityProfile * density, double * newSourceParameters,
   sourcePlane = _sourcePlane;
 }
 
-GLAlgorithm::GLAlgorithm(Plane<math::Complex> * newDeflectionMap, double * observationParameters, double * sourceParameters, Plane<Double> * _sourcePlane)
+GLAlgorithm::GLAlgorithm(Plane<math::Complex> * newDeflectionMap, const struct general_parameters * observationParameters, const std::vector<struct source_parameters> *sourceParameters, Plane<Double> * _sourcePlane)
 {
   this->observationParameters = observationParameters;
-  this->lensParameters = 0;
+  this->lensParameters = NULL;
   this->sourceParameters = sourceParameters;
-  massDensity = 0;
+  massDensity = NULL;
   deflectionMap = newDeflectionMap;
   sourcePlane = _sourcePlane;
 }
@@ -61,13 +61,11 @@ GLAlgorithm::GLAlgorithm(Plane<math::Complex> * newDeflectionMap, double * obser
 GLAlgorithm::~GLAlgorithm()
 {
   //Don't delete params as they are created out side of this class(see constructor)
-  observationParameters = 0;
-  lensParameters = 0;
-  sourceParameters = 0;
-  massDensity = 0;
-  //delete deflectionMap;
-  //deflectionMap = 0;
-  sourcePlane = 0;
+  observationParameters = NULL;
+  lensParameters = NULL;
+  sourceParameters = NULL;
+  massDensity = NULL;
+  sourcePlane = NULL;
 }
 
 //x and y are in pixels
@@ -77,15 +75,13 @@ double * GLAlgorithm::newLocation(double x, double y)
 
   double * returnMe = new double[2];
 
-  double N = observationParameters[0];//Number of pixels
+  const size_t& N = observationParameters->ndim;//Number of pixels
 
   double X,Y;
-  X = (x-N/2)*observationParameters[1];//Size of one pixel in arcseconds
-  Y = (y-N/2)*observationParameters[1];//Size of one pixel in arcseconds
+  X = (x-N/2)*observationParameters->arcsec_per_pixel;//Size of one pixel in arcseconds
+  Y = (y-N/2)*observationParameters->arcsec_per_pixel;//Size of one pixel in arcseconds
   
-
-  int i,j;
-  math::Complex bending = deflectionMap->getValue(Double(x).toInt(),Double(y).toInt());
+  math::Complex bending = deflectionMap->getValue((size_t)x,(size_t)y);
 
   returnMe[0]  = X + bending.getRealPart();//plus sign because alphas contain 
   returnMe[1]  = Y + bending.getImaginaryPart();//the negative sign to point toward mass
@@ -97,23 +93,16 @@ double * GLAlgorithm::newLocation(double x, double y)
 //offset is the offset of the point x=0 and y=0
 math::Complex GLAlgorithm::deflection(double x,double y, double * offset)
 {
-  double * returnMe = new double[2];
+  double returnMe[2];
   returnMe[0] = 0;//x deflection in arcseconds;
   returnMe[1] = 0;//y deflection in arcseconds;
 
-  double c,Gn,N,pixelsize;
-  try
-    {
-      //try is used to in case parameters are accidentally not loaded.
-      c = observationParameters[5];
-      Gn = observationParameters[2];
-      N = observationParameters[0];
-      pixelsize = Cosmology::arcsecondsToCentimeters(observationParameters[1],lensParameters[2]);//Pixelsize in centimeters
-    }
-  catch(...)
-    {
-      throw DavidException("Speed of light not supplied in parameters");
-    }
+
+  //try is used to in case parameters are accidentally not loaded.
+  const double& c = observationParameters->c;
+  const double& Gn = observationParameters->G;
+  const double& N = observationParameters->ndim;
+  const double& pixelsize = Cosmology::arcsecondsToCentimeters(observationParameters->arcsec_per_pixel,lensParameters->redshift);//Pixelsize in centimeters
 	
   double centiX = x*pixelsize;
   double centiY = y*pixelsize;
@@ -130,18 +119,19 @@ math::Complex GLAlgorithm::deflection(double x,double y, double * offset)
   int upperBound = (int)N/2;
   /**/
 
+  double solarMasses,M,xi,deflection,angle;
   for(int i = leftBound; i < rightBound;i++)
     {
       for(int j = lowerBound;j< upperBound;j++)
 	{
 	  if(isLensMassElement(i+(N/2),j+(N/2)))
 	    {
-	      double solarMasses = massInElement(i+(N/2),j+(N/2));
-	      double M = observationParameters[3]*solarMasses;
-	      double xi = sqrt( (i*pixelsize-centiX)*(i*pixelsize-centiX) + (j*pixelsize-centiY)*(j*pixelsize-centiY) );//measured in centimeters
+	      solarMasses = massInElement(i+(N/2),j+(N/2));
+	      M = observationParameters->solar_mass*solarMasses;
+	      xi = sqrt( (i*pixelsize-centiX)*(i*pixelsize-centiX) + (j*pixelsize-centiY)*(j*pixelsize-centiY) );//measured in centimeters
 
-	      double deflection = (xi != 0) ? (206265)*4*Gn*(M)/(c*c*xi) : 0;///deflection is measured in arcseconds
-	      double angle = (i-x == 0) ? (D_PI/2.0) : atan(abs(j- y)/abs(i-x));//
+	      deflection = (xi != 0) ? (206265)*4*Gn*(M)/(c*c*xi) : 0;///deflection is measured in arcseconds
+	      angle = (i-x == 0) ? (D_PI/2.0) : atan(abs(j- y)/abs(i-x));//
 	      if(angle == D_PI/2.0 && (j-y != 0))
 		{
 		  //DEBUG_PRINT("90 deg");
@@ -163,8 +153,6 @@ math::Complex GLAlgorithm::deflection(double x,double y, double * offset)
   
 
   math::Complex returnC(returnMe[0],returnMe[1]);
-  delete [] returnMe;
-  returnMe = 0;
 
   return returnC;
 	
@@ -175,17 +163,18 @@ math::Complex GLAlgorithm::deflection(double x,double y, double * offset)
 //If not, zero is returned.
 Double GLAlgorithm::mapsToSource(double x, double y)
 {
-  double pixelsize = observationParameters[1];
+  const double& pixelsize = observationParameters->arcsec_per_pixel;
+  const struct source_parameters& sourceParams = sourceParameters->at(0);
   double * newCoords = newLocation(x,y);//in arcseconds
   Double returnMe;
 
   if(sourcePlane == 0)
     {
-      double a = sourceParameters[3]*pixelsize;
-      double e = sourceParameters[4];
+      double a = sourceParams.semimajor_length*pixelsize;
+      const double& e = sourceParams.eccentricity;
       double b = a*(1-e);
-      double xCenter = sourceParameters[0]*pixelsize;
-      double yCenter = sourceParameters[1]*pixelsize;
+      double xCenter = sourceParams.xcenter*pixelsize;
+      double yCenter = sourceParams.ycenter*pixelsize;
 	    
       double ellipse = pow(newCoords[0]-xCenter,2)/pow(a,2)+pow(newCoords[1]-yCenter,2)/pow(b,2);
       bool maps = (ellipse <= 1);
@@ -196,15 +185,16 @@ Double GLAlgorithm::mapsToSource(double x, double y)
     }
   else
     {
-      int N = (int)observationParameters[0];
-      int i,j;
-      i = Double(newCoords[0]/pixelsize + (N/2)).toInt();
-      j = Double(newCoords[1]/pixelsize + (N/2)).toInt();
+      const size_t& N = observationParameters->ndim;
+      size_t i,j;
+      i = (size_t)(newCoords[0]/pixelsize + (N/2));
+      j = (size_t)(newCoords[1]/pixelsize + (N/2));
 	    
       if(abs(i) > N || abs(j) > N || i < 0 || j < 0)
 	{
-	  std::cout << i << " " << j << std::endl;
-	  throw DavidException("Out of Range",DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
+	  std::ostringstream error;
+	  error << "GLAlgorithm::mapsToSource: Point Out of Range ("<< i << ", " << j << ")" << std::endl;
+	  throw DavidException(error,DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
 	}
       else
 	{
@@ -214,8 +204,6 @@ Double GLAlgorithm::mapsToSource(double x, double y)
 
 
   delete [] newCoords;
-  newCoords = 0;
-
   return returnMe;
 }
 
@@ -227,7 +215,7 @@ double GLAlgorithm::massInElement(const double x, const double y) const
     }
   else
     {
-      return 0;/**/
+      return 0;
     }
 }
 
@@ -236,7 +224,7 @@ bool GLAlgorithm::isLensMassElement(const double x, const double y) const
   if(massDensity != 0)
     return massDensity->isMassAtPoint(x,y);
   else 
-    return false;/**/
+    return false;
 }
 
 bool GLAlgorithm::createDeflectionMapPlane(int _leftBound, int _rightBound, int _lowerBound, int _upperBound, double * offset)
@@ -250,14 +238,12 @@ bool GLAlgorithm::createDeflectionMapPlane(int _leftBound, int _rightBound, int 
       return false;
     }
 
-  int N = (int)observationParameters[0];
+  size_t N = observationParameters->ndim;
 
   if(deflectionMap != 0)
-    {
-      delete deflectionMap;
-    }
+    delete deflectionMap;
 
-  math::Complex zero(0,0);
+  static const math::Complex zero(0,0);
 
   deflectionMap = new Plane<math::Complex>(N,N,zero);
 
@@ -270,13 +256,11 @@ bool GLAlgorithm::createDeflectionMapPlane(int _leftBound, int _rightBound, int 
   lowerBound = (_lowerBound < 0) ? 0 : _lowerBound;
   upperBound = (_upperBound < 0) ? N : _upperBound;
 	
-
-  VERBOSE_PRINT("Creating Deflection Map: ");
-
+  math::Complex value;
   for(int i = leftBound;i< rightBound;i++)
     for(int j = lowerBound; j<upperBound;j++)
       {
-	math::Complex value = this->deflection(Double(i-(N/2)).toInt(),Double(j-(N/2)).toInt(), offset);
+	value = this->deflection((size_t)(i-(N/2)),(size_t)(j-(N/2)), offset);
 	deflectionMap->setValue(i,j,value);
 
 	if(((i-leftBound)*100/(rightBound-leftBound)) >= (percentFinished+5))

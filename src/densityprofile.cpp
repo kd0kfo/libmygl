@@ -2,8 +2,9 @@
 
 DensityProfile::DensityProfile()
 {
-	lensPlane = 0;
-	lensParameters = observationParameters = 0;
+	lensPlane = NULL;
+	lensParameters = NULL;
+	observationParameters = NULL;
 
 }
 
@@ -17,8 +18,9 @@ DensityProfile::DensityProfile(Plane<Double> * newPlane, const struct lens_param
 
 DensityProfile::~DensityProfile()
 {
-	lensPlane = 0;
-	lensParameters = observationParameters = 0;
+	lensPlane = NULL;
+	lensParameters = NULL;
+	observationParameters = NULL;
 }
 
 Plane<Double> * DensityProfile::setPlane(Plane<Double> * newPlane)
@@ -111,7 +113,8 @@ bool DensityProfile::clearAllFields()
   if(lensPlane != NULL)
     delete lensPlane;
 
-  observationParameters = lensParameters = 0;
+  observationParameters = NULL;
+  lensParameters = NULL;
   lensPlane = NULL;
 
   return true;
