@@ -8,7 +8,7 @@ DensityProfile::DensityProfile()
 
 }
 
-DensityProfile::DensityProfile(Plane<Double> * newPlane, const struct lens_parameters* newlensParameters, const struct general_parameters* newobservationParameters)
+DensityProfile::DensityProfile(Plane<Double> **newPlane, const struct lens_parameters* newlensParameters, const struct general_parameters* newobservationParameters)
 {
 	lensPlane = newPlane;
 	lensParameters = newlensParameters;
@@ -25,14 +25,19 @@ DensityProfile::~DensityProfile()
 
 Plane<Double> * DensityProfile::setPlane(Plane<Double> * newPlane)
 {
-	Plane<Double> * oldPlane = lensPlane;
-	lensPlane = newPlane;
-	return oldPlane;
+  Plane<Double> * oldPlane;
+  if(lensPlane == NULL)
+    throw DavidException("DensityProfile::setPlane: Uninitialized plane.");
+  oldPlane = *lensPlane;
+  *lensPlane = newPlane;
+  return oldPlane;
 }
 
-Plane<Double> * DensityProfile::getPlane()
+Plane<Double>* DensityProfile::getPlane()
 {
-	return lensPlane;
+  if(lensPlane == NULL)
+    return NULL;
+  return *lensPlane;
 }
 
 bool DensityProfile::isMassAtPoint(const double x,const double y) const
@@ -40,18 +45,18 @@ bool DensityProfile::isMassAtPoint(const double x,const double y) const
 	return massAtPoint(x,y) != 0;
 }
 
-double DensityProfile::massAtPoint(const double x, const double y) const
+double DensityProfile::massAtPoint(double x, double y) const
 {
-  if(lensPlane != 0)
+
+  if(observationParameters == 0 || lensParameters == 0)
+    return 0.0;
+  
+  const double& N = observationParameters->ndim;
+  if(lensPlane != NULL && *lensPlane != NULL)
     {
-      //std::cout << "Actually used lensplane" << std::endl;
-      return lensPlane->getValue((int)x,(int)y).doubleValue();
+      return (*lensPlane)->getValue((int)x,(int)y).doubleValue();
     }
 
-	if(observationParameters == 0 || lensParameters == 0)
-		return 0.0;
-
-	const double& N = observationParameters->ndim;
 	const double& a = lensParameters->semimajor_length;
 	const double& e = lensParameters->eccentricity;
 	const double& pixelsize = observationParameters->arcsec_per_pixel;
@@ -80,38 +85,33 @@ double DensityProfile::massAtPoint(const double x, const double y) const
 
 void DensityProfile::drawPlane()
 {
-
+  Plane<Double> *newPlane;
   if(observationParameters == 0 || lensParameters == 0)
 		return;
   const size_t& N = observationParameters->ndim;
 
-  static const Double defaultD(0.0);
-  Plane<Double> * newPlane = new Plane<Double>(N,N,defaultD);
-  if(lensPlane != 0)
-    {
-      delete lensPlane;
-      lensPlane = 0;
-    }
+  if(*lensPlane != NULL)
+    delete *lensPlane;
+
+  newPlane = new Plane<Double>(N,N,0.0);
 
   for(size_t i = 0 ;i<N;i++)
     {
       for(size_t j = 0;j<N;j++)
 	{
-	  int x = i - (N/2);
-	  int y = j - (N/2);
-	  Double value(this->massAtPoint(x,y));
+	  Double value(this->massAtPoint(i,j));
 	  newPlane->setValue(i,j,value);
 	}
     }
-	
-  lensPlane = newPlane;
+
+  *lensPlane = newPlane;
 }
 
 
 bool DensityProfile::clearAllFields()
 {
   if(lensPlane != NULL)
-    delete lensPlane;
+    delete *lensPlane;
 
   observationParameters = NULL;
   lensParameters = NULL;

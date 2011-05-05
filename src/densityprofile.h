@@ -32,7 +32,7 @@ public:
 	 * @see ray_trace_ellipse for simulation setup
 	 * @param observationParameters General Parameters
 	 */
-	DensityProfile(Plane<Double> * newPlane, const struct lens_parameters *lensParameters, const struct general_parameters *observationParameters);
+	DensityProfile(Plane<Double> **newPlane, const struct lens_parameters *lensParameters, const struct general_parameters *observationParameters);
 
 	/**
 	 * Destructor.
@@ -44,7 +44,7 @@ public:
 	 * @param newPlane new Lens plane.
 	 * @return Plane<Double> Old plane value. NOTE: if you don't delete it, it won't be deleted(eg memory leak). Enjoy!
 	 */
-	Plane<Double> * setPlane(Plane<Double> * newPlane);//Returns Old Plane, DELETE IT!!
+	Plane<Double> * setPlane(Plane<Double> *newPlane);//Returns Old Plane, DELETE IT!!
 
 	/**
 	 * Gets a pointer to the lens plane.
@@ -53,7 +53,7 @@ public:
 	 *
 	 * @see drawPlane()
 	 */
-	Plane<Double> * getPlane();
+	Plane<Double> *getPlane();
 	
 	/**
 	 * Determines whether there is mass at a given point, (x,y).
@@ -62,7 +62,7 @@ public:
 	 * @see massAtPoint(const double x, const double y)
 	 * @return bool
 	 */
-	bool isMassAtPoint(const double x, const double y) const;
+	bool isMassAtPoint(double x, double y) const;
 	
 	/**
 	 * Returns the mass at the point, (x,y), in solar masses.
@@ -80,12 +80,12 @@ public:
 	 * @param y double vertical value.
 	 * @return double mass value
 	 */
-	double massAtPoint(const double x, const double y) const;
+	double massAtPoint(double x, double y) const;
 
 	/**
 	 * Determines whether or not the Plane which contains the mass at each point is created.
 	 */
-	bool densityProfilePlaneIsDefined() const{ return lensPlane != 0;}
+	bool densityProfilePlaneIsDefined() const{ return lensPlane != NULL && *lensPlane != NULL;}
 	
 	/**
 	 * Creates the Plane which contains the mass at each point.
@@ -97,7 +97,7 @@ public:
 	const struct lens_parameters* getLensParameters(){return lensParameters;}
 
 private:
-	Plane<Double> * lensPlane;
+	Plane<Double> **lensPlane;
 	const struct general_parameters* observationParameters;
 	const struct lens_parameters* lensParameters;
 

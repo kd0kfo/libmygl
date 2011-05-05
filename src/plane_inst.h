@@ -350,7 +350,10 @@ template <class T> Plane<T>& Plane<T>::operator=(const Plane<T>& rhs)
       }
   
   if(rhs.getHeader() != 0)
-    header = new std::string(*(rhs.getHeader()));
+    {
+      header = new std::string;
+      *header = *rhs.getHeader();
+    }
   else
     header = 0;
       
