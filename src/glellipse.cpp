@@ -1,12 +1,38 @@
-#ifndef GLALGORITHM_CPP
-#define GLALGORITHM_CPP
-
-#ifndef _WIN32
+/**
+ * 
+ * This file is part of libmygl, a C++ library for gravitational lensing
+ * calculations. 
+ *
+ * Any use of of this library must cite my PhD thesis,
+ * Coss, D., "Weak Shear Study of Galaxy Clusters by Simulated Gravitational
+ * Lensing", PhD Thesis, 2010
+ * which may be found at http://thesis.davecoss.com/Coss_dissertation.pdf
+ *
+ * Copyright 2007, 2010 David Coss, PhD
+ *
+ * libmygl is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * libmygl is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with libmygl.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include <math.h>
 #include <iostream>
-#endif
-
 
 #include "glellipse.h"
+#include "structs.h"
+#include "Cosmology.h"
+
+#include "libdnstd/Complex.h"
+#include "libdnstd/Double.h"
+
 
 GLAlgorithm::GLAlgorithm()
 {
@@ -124,7 +150,6 @@ math::Complex GLAlgorithm::deflection(double x,double y, double * offset)
     {
       for(int j = lowerBound;j< upperBound;j++)
 	{
-	  //printf("M? (%f,%f)",i+(N/2),j+(N/2));
 	  if(isLensMassElement(i+(N/2),j+(N/2)))
 	    {
 	      solarMasses = massInElement(i+(N/2),j+(N/2));
@@ -132,7 +157,6 @@ math::Complex GLAlgorithm::deflection(double x,double y, double * offset)
 	      xi = sqrt( (i*pixelsize-centiX)*(i*pixelsize-centiX) + (j*pixelsize-centiY)*(j*pixelsize-centiY) );//measured in centimeters
 
 	      deflection = (xi != 0) ? (206265)*4*Gn*(M)/(c*c*xi) : 0;///deflection is measured in arcseconds
-	      //printf(" 206265*4*%e*%e/(%e*%e*%e) -> %e\n",Gn,M,c,c,xi,deflection);
 	      angle = (i-x == 0) ? (D_PI/2.0) : atan(abs(j- y)/abs(i-x));//
 	      if(angle == D_PI/2.0 && (j-y != 0))
 		{
@@ -149,17 +173,12 @@ math::Complex GLAlgorithm::deflection(double x,double y, double * offset)
 		{
 		  returnMe[0] += deflection*((i-x)/abs(i-x));
 		}
-	    }
-	  /*else
-	    printf("\n");*/
-	}
-    }
-  
+	    }//end if(isLensMassElement...)
+	}//end for(j ...)
+    }//end for(i ...)
 
   math::Complex returnC(returnMe[0],returnMe[1]);
-
   return returnC;
-	
 }
 
 //x and y in pixels
@@ -247,7 +266,7 @@ bool GLAlgorithm::createDeflectionMapPlane(int _leftBound, int _rightBound, int 
 
   deflectionMap = new Plane<math::Complex>(N,N,zero);
 
-  int percentFinished = 0;
+  float percentFinished = 0.;
 
   int leftBound, rightBound, lowerBound, upperBound;
 
@@ -265,9 +284,8 @@ bool GLAlgorithm::createDeflectionMapPlane(int _leftBound, int _rightBound, int 
 
 	if(((i-leftBound)*100/(rightBound-leftBound)) >= (percentFinished+5))
 	  {
-	    percentFinished = (int) (i-leftBound)*100/(rightBound-leftBound);
-	    VERBOSE_PRINT("Percent finished: ");
-	    VERBOSE_PRINT(percentFinished);
+	    percentFinished = (i-leftBound)*100./(rightBound-leftBound);
+	    printf("Percent finished: %f\n",percentFinished);
 	  }
       }
 
@@ -276,4 +294,3 @@ bool GLAlgorithm::createDeflectionMapPlane(int _leftBound, int _rightBound, int 
 }
 
 
-#endif

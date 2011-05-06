@@ -1,4 +1,32 @@
+/**
+ * 
+ * This file is part of libmygl, a C++ library for gravitational lensing
+ * calculations. 
+ *
+ * Any use of of this library must cite my PhD thesis,
+ * Coss, D., "Weak Shear Study of Galaxy Clusters by Simulated Gravitational
+ * Lensing", PhD Thesis, 2010
+ * which may be found at http://thesis.davecoss.com/Coss_dissertation.pdf
+ *
+ * Copyright 2007, 2010 David Coss, PhD
+ *
+ * libmygl is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * libmygl is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with libmygl.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include "Cosmology.h"
+#include <math.h>
+#include "libdnstd/DavidException.h"
+#include "libdnstd/Double.h"
 
 const double Cosmology::speedOfLight = 3e+10;//centimeters per second
 const double Cosmology::newtonsConstant = .0000000667;//cm^3 /g /s^2
@@ -34,9 +62,6 @@ double Cosmology::redshiftToDistance(double z1, double z2, double omega, double 
       chi_d = demianskiChi(z1);
       chi_s = demianskiChi(z2);
       return (1+z1)*d_d*d_s*(chi_d-chi_s)/hubbleLength;
-      /**SEF 1999 version/*
-      returnMe = 2*(1+z1)/(omega*omega);
-      returnMe *= R1(z2,omega)*R2(z1,omega) - R1(z1,omega)*R2(z2,omega);/**/
     }
 
   

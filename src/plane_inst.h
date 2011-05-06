@@ -1,3 +1,28 @@
+/**
+ * 
+ * This file is part of libmygl, a C++ library for gravitational lensing
+ * calculations. 
+ *
+ * Any use of of this library must cite my PhD thesis,
+ * Coss, D., "Weak Shear Study of Galaxy Clusters by Simulated Gravitational
+ * Lensing", PhD Thesis, 2010
+ * which may be found at http://thesis.davecoss.com/Coss_dissertation.pdf
+ *
+ * Copyright 2007, 2010 David Coss, PhD
+ *
+ * libmygl is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * libmygl is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with libmygl.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #ifndef PLANE_INST_H
 #define PLANE_INST_H 1
 
@@ -13,21 +38,6 @@
 
 #include <iostream>
 #include <vector>
-#ifndef VERBOSE_PRINT
-#ifdef __VERBOSE__
-#define VERBOSE_PRINT(x) std::cout << x << std::endl; 
-#else 
-#define VERBOSE_PRINT(x)
-#endif
-#endif
-
-#ifndef DEBUG_PRINT
-#ifdef __DEBUG__
-#define DEBUG_PRINT(x) std::cout << x << std::endl; 
-#else 
-#define DEBUG_PRINT
-#endif
-#endif
 
 
 /**
@@ -37,7 +47,7 @@
  * This template must be instantiated for the specificl program's use, eg template class Plane<Double>
  * 
  * EasyBMP is used for drawing.
- * Created By David Coss, 2007
+ * Created By David Coss, 2007, 2010
  */
 template<class T> class Plane
 {
@@ -664,8 +674,8 @@ template <class T> Plane<T> * Plane<T>::readPlane(const char * fileName)
 		
 		int counter = 0;
 		int endCount = newPlanePointer->numberOfRows();
-		int percentFinished = 0;
-		VERBOSE_PRINT("Reading Plane:");
+		float percentFinished = 0.;
+		printf("Reading Plane:\n");
 		char testChar;
 		for(int i = 0;i< newPlanePointer->numberOfRows();i++)
 			for(int j = 0;j< newPlanePointer->numberOfColumns();j++)
@@ -685,13 +695,12 @@ template <class T> Plane<T> * Plane<T>::readPlane(const char * fileName)
 			  if((i*100/endCount) >= (percentFinished+5))
 				{
 					percentFinished = (int) i*100/endCount;
-					VERBOSE_PRINT("Percent finished: ");
-					VERBOSE_PRINT(percentFinished);
+					printf("Percent finished: %f\n",percentFinished);
 				}
 			  
 			}
 		
-		VERBOSE_PRINT("parsing complete");
+		printf("Parsing complete\n");
 
 		if(oldheader != "")
 		  newPlanePointer->setHeader(oldheader.substr(0,oldheader.size()-1));
