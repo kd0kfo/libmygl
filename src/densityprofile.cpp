@@ -133,7 +133,7 @@ void DensityProfile::drawPlane()
 }
 
 
-bool DensityProfile::clearAllFields()
+void DensityProfile::clearAllFields()
 {
   if(lensPlane != NULL)
     delete *lensPlane;
@@ -141,11 +141,5 @@ bool DensityProfile::clearAllFields()
   observationParameters = NULL;
   lensParameters = NULL;
   lensPlane = NULL;
-
-  return true;
-
 }
-
-
-
 

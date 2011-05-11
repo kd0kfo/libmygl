@@ -647,7 +647,7 @@ template <class T> Plane<T> * Plane<T>::readPlane(const char * fileName)
 	if (file.is_open())
 	{
 		int tmpR,tmpC;
-		char * curr = new char[150];
+		char curr[150];
 		std::string string = "#";
 		std::string oldheader;
 		

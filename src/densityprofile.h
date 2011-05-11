@@ -109,7 +109,7 @@ class DensityProfile
    */
   void drawPlane();
 	
-  bool clearAllFields();///< deletes everything. sets all pointers equal to zero. BE CAREFUL!!!
+  void clearAllFields();///< only deletes the lens plane, but sets all pointers equal to zero. BE CAREFUL!!!
   const struct general_parameters* getObservationParameters(){return observationParameters;}
   const struct lens_parameters* getLensParameters(){return lensParameters;}
 
