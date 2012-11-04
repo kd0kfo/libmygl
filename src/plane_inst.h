@@ -26,15 +26,17 @@
 #ifndef PLANE_INST_H
 #define PLANE_INST_H 1
 
-#include <fstream>
-#include <sstream>
-
 #ifndef __WIN__
 #include "EasyBMP/EasyBMP.h"
 #endif
 
 #include "libdnstd/DavidException.h"
 #include "libdnstd/Double.h"
+
+#include <netcdf.h>
+
+#include <fstream>
+#include <sstream>
 
 #include <iostream>
 #include <vector>
@@ -151,6 +153,10 @@ public:
 	 */
 	bool savePlane(const std::string& rhs, bool verbose = false);
 
+	bool writeCDF(const std::string& filename, bool verbose = false);
+	bool writeCDF(const char* filename, bool verbose = false);
+
+
 	/**
 	 * Returns a pointer to a plane created based on a file.
 	 * Note: if there is an error in the file being read, a DavidException is thrown.
@@ -160,7 +166,7 @@ public:
 	 * @throws DavidException.
 	 */
 	static Plane<T> * readPlane(const char * fileName);
-	
+
 	/**
 	 * Returns a pointer to a plane created based on a file.
 	 * Note: if there is an error in the file being read, a DavidException is thrown.
@@ -170,6 +176,9 @@ public:
 	 * @throws DavidException.
 	 */
 	static Plane<T> * readPlane(const std::string& fileName);
+
+	static Plane<T>* loadCDF(const std::string& filename, bool verbose = false);
+	static Plane<T>* loadCDF(const char* filename, bool verbose = false);
 	
 	/**
 	 * Returns a pointer to a plane created based on a bitmap file.
@@ -647,6 +656,100 @@ template <class T> bool Plane<T>::savePlane(const char * fileName, bool verbose)
 
 }
 
+template<class T> bool Plane<T>::writeCDF(const std::string& filename, bool verbose){return writeCDF(filename.c_str(),verbose);}
+
+template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
+{
+  int retval, ncid, x_dimid, y_dimid, dimids[2], varid;
+  double *temparray = NULL;
+
+  if(filename == NULL)
+    return false;
+  
+  temparray = (double*)malloc(sizeof(double)*(*this->rows)*(*this->columns));
+  if(temparray == NULL)
+    throw DavidException("Could not allocate memory for writeCDF");
+  
+  if((retval = nc_create(filename, NC_CLOBBER, &ncid)))
+    {
+      free(temparray);
+      std::string error = "Error creating NetCDF file in writeCDF.";
+      error += nc_strerror(retval);
+      throw DavidException(error);
+    }
+  
+  /* Define the dimensions. NetCDF will hand back an ID for each. */
+   if ((retval = nc_def_dim(ncid, "x", *this->rows, &x_dimid)))
+     {
+       free(temparray);
+       std::string error = "Error defining x dimension for NetCDF file in writeCDF.";
+       error += nc_strerror(retval);
+       throw DavidException(error);
+     }
+   if ((retval = nc_def_dim(ncid, "y", *this->columns, &y_dimid)))
+     {
+       free(temparray);
+       std::string error = "Error defining y dimension for NetCDF file in writeCDF.";
+       error += nc_strerror(retval);
+       throw DavidException(error);
+     }
+
+   /* The dimids array is used to pass the IDs of the dimensions of
+    * the variable. */
+   dimids[0] = x_dimid;
+   dimids[1] = y_dimid;
+
+   /* Define the variable. The type of the variable in this case is
+    * NC_INT (4-byte integer). */
+   if ((retval = nc_def_var(ncid, "data", NC_INT, 2, dimids, &varid)))
+     {
+       free(temparray);
+       std::string error = "Defining data for NetCDF file in writeCDF.";
+       error += nc_strerror(retval);
+       throw DavidException(error);
+     }
+
+   /* End define mode. This tells netCDF we are done defining
+    * metadata. */
+   if ((retval = nc_enddef(ncid)))
+     {
+       free(temparray);
+       std::string error = "Error ending define mode for NetCDF file in writeCDF.";
+       error += nc_strerror(retval);
+       throw DavidException(error);
+     }
+
+   Double tmp;
+   for(int i = 0, size = (*this->rows)*(*this->columns);i< size;i++)
+     {
+       tmp = this->planeArray[i];
+       temparray[i] = tmp.doubleValue();
+     }
+
+   /* Write the pretend data to the file. Although netCDF supports
+    * reading and writing subsets of data, in this case we write all
+    * the data in one operation. */
+   if ((retval = nc_put_var_double(ncid, varid, temparray)))
+     {
+       free(temparray);
+       std::string error = "Error Writing NetCDF file in writeCDF.";
+       error += nc_strerror(retval);
+       throw DavidException(error);
+     }
+
+   /* Close the file. This frees up any internal netCDF resources
+    * associated with the file, and flushes any buffers. */
+   if ((retval = nc_close(ncid)))
+     {
+       free(temparray);
+       std::string error = "Error closing NetCDF file in writeCDF.";
+       error += nc_strerror(retval);
+       throw DavidException(error);
+     }
+
+   return true;
+  
+}
 
 template <class T>  Plane<T> * Plane<T>::readPlane(const std::string& fileName){return Plane<T>::readPlane(fileName.c_str());}
 
@@ -726,6 +829,12 @@ template <class T> Plane<T> * Plane<T>::readPlane(const char * fileName)
 	  throw DavidException(std::string("File Read Error:")+fileName);
 }
 
+template <class T>  Plane<T>* Plane<T>::loadCDF(const std::string& fileName, bool verbose){return Plane<T>::loadCDF(fileName.c_str());}
+
+template <class T> Plane<T>* Plane<T>::loadCDF(const char* filename, bool verbose)
+{
+  throw DavidException("IMPLEMENT LOAD CDF");
+}
 
 template <class T> Plane<Double> * Plane<T>::bmpToPlane(const std::string& fileName){return bmpToPlane(fileName.c_str());}
 

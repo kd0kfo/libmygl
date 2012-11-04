@@ -22,6 +22,15 @@ fi
 AC_ARG_WITH([dnstd],AS_HELP_STRING([--with-dnstd],[Include libdnstd]),with_dnstd=${withval},AC_MSG_RESULT(Assuming libdnstd is installed in system paths))
 if test x$with_dnstd != x; then
    AC_SUBST(DNSTD_CPPFLAGS,"-I $with_dnstd/include/")
+   AC_SUBST(DNSTD_LDFLAGS,"-L$with_dnstd/lib")
+   AC_SUBST(DNSTD_LDADD,"-ldnstd")
+fi
+
+AC_ARG_WITH([netcdf],AS_HELP_STRING([--with-netcdf],[Include netcdf]),with_netcdf=${withval},AC_MSG_RESULT(Assuming NetCDF is installed in system paths))
+if test x$with_dnstd != x; then
+   AC_SUBST(NETCDF_CPPFLAGS,"-I $with_netcdf/include/")
+   AC_SUBST(NETCDF_LDFLAGS,"-L$with_netcdf/lib")
+   AC_SUBST(NETCDF_LDADD,"-lnetcdf")
 fi
 
 
@@ -39,5 +48,6 @@ AC_FUNC_FORK
 AC_CHECK_FUNCS([alarm floor pow sqrt strerror])
 
 AC_CONFIG_FILES([Makefile
-                 src/Makefile])
+                 src/Makefile
+		 test/Makefile])
 AC_OUTPUT

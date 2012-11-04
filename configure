@@ -609,6 +609,11 @@ LIBOBJS
 EGREP
 GREP
 CPP
+NETCDF_LDADD
+NETCDF_LDFLAGS
+NETCDF_CPPFLAGS
+DNSTD_LDADD
+DNSTD_LDFLAGS
 DNSTD_CPPFLAGS
 EASYBMP_CPPFLAGS
 RANLIB
@@ -701,6 +706,7 @@ enable_option_checking
 enable_dependency_tracking
 with_easybmp
 with_dnstd
+with_netcdf
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1339,6 +1345,7 @@ Optional Packages:
   --with-easybmp%<:%=path%:>%
                           Include EasyBMP library
   --with-dnstd            Include libdnstd
+  --with-netcdf           Include netcdf
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -4220,6 +4227,28 @@ fi
 if test x$with_dnstd != x; then
    DNSTD_CPPFLAGS="-I $with_dnstd/include/"
 
+   DNSTD_LDFLAGS="-L$with_dnstd/lib"
+
+   DNSTD_LDADD="-ldnstd"
+
+fi
+
+
+# Check whether --with-netcdf was given.
+if test "${with_netcdf+set}" = set; then :
+  withval=$with_netcdf; with_netcdf=${withval}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: Assuming NetCDF is installed in system paths" >&5
+$as_echo "Assuming NetCDF is installed in system paths" >&6; }
+fi
+
+if test x$with_dnstd != x; then
+   NETCDF_CPPFLAGS="-I $with_netcdf/include/"
+
+   NETCDF_LDFLAGS="-L$with_netcdf/lib"
+
+   NETCDF_LDADD="-lnetcdf"
+
 fi
 
 
@@ -5011,7 +5040,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile test/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5750,6 +5779,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+    "test/Makefile") CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
