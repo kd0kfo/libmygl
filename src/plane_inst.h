@@ -141,7 +141,7 @@ public:
 	 * @return bool true if the save was successful.
 	 * @see readPlane(const char * fileName, Plane<T> * newPlanePointer)
 	 */
-	bool savePlane(const char * fileName);
+	bool savePlane(const char * fileName, bool verbose = false);
 
 	/**
 	 * Saves the plane data as a text file.
@@ -149,7 +149,7 @@ public:
 	 * @param rhs std::string string for the file's name
 	 * @return bool true if the save was successful.
 	 */
-	bool savePlane(const std::string& rhs);
+	bool savePlane(const std::string& rhs, bool verbose = false);
 
 	/**
 	 * Returns a pointer to a plane created based on a file.
@@ -598,9 +598,9 @@ template <class T> T Plane<T>::getTotalValue()const
 }
 
 
-template <class T> bool Plane<T>::savePlane(const std::string& rhs){return savePlane(rhs.c_str());}
+template <class T> bool Plane<T>::savePlane(const std::string& rhs, bool verbose){return savePlane(rhs.c_str());}
 
-template <class T> bool Plane<T>::savePlane(const char * fileName)
+template <class T> bool Plane<T>::savePlane(const char * fileName, bool verbose)
 {
 	using namespace std;
 	
@@ -620,15 +620,26 @@ template <class T> bool Plane<T>::savePlane(const char * fileName)
 	  using namespace std;
 	  ostringstream stream;
 	  std::string tempString;
+	  float percentFinished = 0.0;
+	  if(verbose)
+	    printf("Saving Plane:\n");
+	  
 	  for(int i = 0;i< *rows;i++)
-	    for(int j = 0;j<*columns;j++)
+	    {
+	      for(int j = 0;j<*columns;j++)
 		{
-			outputT = getValue(i,j);
-			tempString = outputT.str(stream);
-			file << tempString << endl;
-			stream.str("");
-			stream.clear();
+		  outputT = getValue(i,j);
+		  tempString = outputT.str(stream);
+		  file << tempString << endl;
+		  stream.str("");
+		  stream.clear();
 		}
+	      if(verbose && (i*100/(*rows)) >= (percentFinished+5))
+		{
+		  percentFinished = (int) i*100/(*rows);
+		  printf("Percent finished: %f\n",percentFinished);
+		}
+	    }
 	  return true;
 	}
 	else
