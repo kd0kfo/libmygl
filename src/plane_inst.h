@@ -667,9 +667,7 @@ template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
    dimids[0] = x_dimid;
    dimids[1] = y_dimid;
 
-   /* Define the variable. The type of the variable in this case is
-    * NC_INT (4-byte integer). */
-   if ((retval = nc_def_var(ncid, PLANE_DATA_NAME, NC_INT, 2, dimids, &varid)))
+   if ((retval = nc_def_var(ncid, PLANE_DATA_NAME, NC_DOUBLE, 2, dimids, &varid)))
      {
        free(temparray);
        std::string error = "Defining data for NetCDF file in writeCDF.\n";
