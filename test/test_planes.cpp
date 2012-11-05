@@ -16,10 +16,11 @@ void write_plane()
 
 void read_plane()
 {
-  Plane<math::Complex> empty_plane;
-  empty_plane.readPlane("test.plane");
+  Plane<math::Complex> *empty_plane;
+  empty_plane = Plane<math::Complex>::readPlane("test.plane");
   printf("Read plane.\n");
-
+  if(empty_plane)
+    delete empty_plane;
 }
 
 void write_cdf()
@@ -33,9 +34,11 @@ void write_cdf()
 
 void load_cdf()
 {
-  Plane<math::Complex> empty_plane;
-  empty_plane.loadCDF("test.nc");
+  Plane<math::Complex> *empty_plane = NULL;
+  empty_plane = Plane<math::Complex>::loadCDF("test.nc");
   printf("Loaded NetCDF\n");
+  if(empty_plane)
+    delete empty_plane;
 }
 
 int main(int argc, char **argv)

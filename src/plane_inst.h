@@ -40,7 +40,7 @@
 
 #include <iostream>
 #include <vector>
-
+#include <cerrno>
 
 /**
  * Plane Handler.
@@ -51,6 +51,12 @@
  * EasyBMP is used for drawing.
  * Created By David Coss, 2007, 2010
  */
+
+static const char PLANE_XDIM_NAME[] = "x";
+static const char PLANE_YDIM_NAME[] = "y";
+static const char PLANE_DATA_NAME[] = "data";
+
+
 template<class T> class Plane
 {
 public:
@@ -242,8 +248,6 @@ private:
 	std::vector<T> planeArray;
 	int numberOfCurves;
 	std::string * header;//Plane info if provided, otherwise null pointer
-
-		  
 
 };
 
@@ -673,23 +677,23 @@ template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
   if((retval = nc_create(filename, NC_CLOBBER, &ncid)))
     {
       free(temparray);
-      std::string error = "Error creating NetCDF file in writeCDF.";
+      std::string error = "Error creating NetCDF file in writeCDF.\n";
       error += nc_strerror(retval);
       throw DavidException(error);
     }
   
   /* Define the dimensions. NetCDF will hand back an ID for each. */
-   if ((retval = nc_def_dim(ncid, "x", *this->rows, &x_dimid)))
+   if ((retval = nc_def_dim(ncid, PLANE_XDIM_NAME, *this->rows, &x_dimid)))
      {
        free(temparray);
-       std::string error = "Error defining x dimension for NetCDF file in writeCDF.";
+       std::string error = "Error defining x dimension for NetCDF file in writeCDF.\n";
        error += nc_strerror(retval);
        throw DavidException(error);
      }
-   if ((retval = nc_def_dim(ncid, "y", *this->columns, &y_dimid)))
+   if ((retval = nc_def_dim(ncid, PLANE_YDIM_NAME, *this->columns, &y_dimid)))
      {
        free(temparray);
-       std::string error = "Error defining y dimension for NetCDF file in writeCDF.";
+       std::string error = "Error defining y dimension for NetCDF file in writeCDF.\n";
        error += nc_strerror(retval);
        throw DavidException(error);
      }
@@ -701,10 +705,10 @@ template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
 
    /* Define the variable. The type of the variable in this case is
     * NC_INT (4-byte integer). */
-   if ((retval = nc_def_var(ncid, "data", NC_INT, 2, dimids, &varid)))
+   if ((retval = nc_def_var(ncid, PLANE_DATA_NAME, NC_INT, 2, dimids, &varid)))
      {
        free(temparray);
-       std::string error = "Defining data for NetCDF file in writeCDF.";
+       std::string error = "Defining data for NetCDF file in writeCDF.\n";
        error += nc_strerror(retval);
        throw DavidException(error);
      }
@@ -714,7 +718,7 @@ template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
    if ((retval = nc_enddef(ncid)))
      {
        free(temparray);
-       std::string error = "Error ending define mode for NetCDF file in writeCDF.";
+       std::string error = "Error ending define mode for NetCDF file in writeCDF.\n";
        error += nc_strerror(retval);
        throw DavidException(error);
      }
@@ -732,7 +736,7 @@ template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
    if ((retval = nc_put_var_double(ncid, varid, temparray)))
      {
        free(temparray);
-       std::string error = "Error Writing NetCDF file in writeCDF.";
+       std::string error = "Error Writing NetCDF file in writeCDF.\n";
        error += nc_strerror(retval);
        throw DavidException(error);
      }
@@ -742,7 +746,7 @@ template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
    if ((retval = nc_close(ncid)))
      {
        free(temparray);
-       std::string error = "Error closing NetCDF file in writeCDF.";
+       std::string error = "Error closing NetCDF file in writeCDF.\n";
        error += nc_strerror(retval);
        throw DavidException(error);
      }
@@ -833,7 +837,112 @@ template <class T>  Plane<T>* Plane<T>::loadCDF(const std::string& fileName, boo
 
 template <class T> Plane<T>* Plane<T>::loadCDF(const char* filename, bool verbose)
 {
-  throw DavidException("IMPLEMENT LOAD CDF");
+  int status, recid, ncid, xid, yid;
+  size_t xdim,ydim,size;
+  char recname[NC_MAX_NAME+1];
+  double *temparray = NULL;
+  Plane<T> *new_plane_ptr = NULL;
+  
+  status = nc_open(filename, NC_NOWRITE, &ncid); 
+  if (status != NC_NOERR) 
+    {
+      std::string error = "Error opening NetCDF file in loadCDF.";
+      error += nc_strerror(status);
+      throw DavidException(error);
+    }
+
+     status = nc_inq_unlimdim(ncid, &recid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimensions NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+       
+     status = nc_inq_dimid(ncid, PLANE_XDIM_NAME, &xid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension (";
+	 error += PLANE_XDIM_NAME;
+	 error += ") id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_dimlen(ncid, xid, &xdim);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension (";
+	 error += PLANE_XDIM_NAME; 
+	 error += ") NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+     
+      status = nc_inq_dimid(ncid, PLANE_YDIM_NAME, &yid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension ("; 
+	 error += PLANE_YDIM_NAME; 
+	 error += ") id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_dimlen(ncid, yid, &ydim);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension (";
+	 error += PLANE_YDIM_NAME;
+	 error += ") NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     printf("Have dimensions %d by %d\n",xdim,ydim);
+     
+     status = nc_inq_varid(ncid, PLANE_DATA_NAME, &recid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     size = xdim*ydim*sizeof(double);
+     temparray = (double*)malloc(size);
+     if(temparray == NULL)
+       {
+	 std::string error = "Error allocating memory for array in loadCDF.\n";
+	 if(errno)
+	   error += strerror(errno);
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_get_var_double(ncid, recid, temparray);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 free(temparray);
+	 throw DavidException(error);
+       }
+
+     new_plane_ptr = new Plane<T>(xdim,ydim,0.0);
+     if(new_plane_ptr == NULL)
+       {
+	 std::string error = "Error allocating memory for array in loadCDF.\n";
+	 if(errno)
+	   error += strerror(errno);
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+     for(int i = 0;i<xdim*ydim;i++)
+       new_plane_ptr->planeArray[i] = T(temparray[i]);
+
+     free(temparray);
+     return new_plane_ptr;
 }
 
 template <class T> Plane<Double> * Plane<T>::bmpToPlane(const std::string& fileName){return bmpToPlane(fileName.c_str());}
