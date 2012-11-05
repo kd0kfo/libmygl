@@ -1,9 +1,8 @@
 #include "plane.h"
 
-#include <cstdio>
-
 #include <netcdf.h>
 
+#include <cstdio>
 
 void write_plane()
 {
@@ -47,6 +46,7 @@ int main(int argc, char **argv)
   read_plane();
   write_cdf();
   load_cdf();
+
   return 0;
   
 }

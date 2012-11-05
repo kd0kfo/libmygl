@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.5])
-AC_INIT([My GL], [2.2.1], [david@davecoss.com])
+AC_INIT([My GL], [2.3], [david@davecoss.com])
 AC_CONFIG_SRCDIR([src/])
 AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
@@ -27,7 +27,7 @@ if test x$with_dnstd != x; then
 fi
 
 AC_ARG_WITH([netcdf],AS_HELP_STRING([--with-netcdf],[Include netcdf]),with_netcdf=${withval},AC_MSG_RESULT(Assuming NetCDF is installed in system paths))
-if test x$with_dnstd != x; then
+if test x$with_netcdf != x; then
    AC_SUBST(NETCDF_CPPFLAGS,"-I $with_netcdf/include/")
    AC_SUBST(NETCDF_LDFLAGS,"-L$with_netcdf/lib")
    AC_SUBST(NETCDF_LDADD,"-lnetcdf")

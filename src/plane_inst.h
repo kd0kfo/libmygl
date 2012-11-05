@@ -39,7 +39,6 @@
 #include <sstream>
 
 #include <iostream>
-#include <vector>
 #include <cerrno>
 
 /**
@@ -69,11 +68,11 @@ public:
 	 * @param columns
 	 * @param intialValue initial value of all of the array elements.
 	 */
-	Plane(int rows, int columns, T initialValue);
+	Plane(size_t rows, size_t columns, T initialValue);
 
 	Plane();
 	Plane(const Plane<T>&);
-	Plane(std::vector<T> oldTs, int rows, int columns);
+	Plane(const T *oldTs, size_t rows, size_t columns);
 	/**
 	 * Destructor.
 	 */
@@ -85,11 +84,12 @@ public:
 	 * Fills the entire plane with the given value.
 	 */
 	void populate(const T& value);
-	const T& getValue(const int x, const int y) const;///< gets the value at (x,y).
-	void setValue(int x, int y, T value);///< setsthe value at (x,y) to value.
-	int numberOfRows() const;///< gives the number of rows as an int.
-	int numberOfColumns() const;///< gives the number of columns as an int.
-	int * getDimensions() const;///< gives rows and columns (in that order) in an array
+	const T& getValue(size_t x, size_t y) const;///< gets the value at (x,y).
+	void setValue(size_t x, size_t y, T value);///< setsthe value at (x,y) to value.
+	size_t numberOfRows() const;///< gives the number of rows as an int.
+	size_t numberOfColumns() const;///< gives the number of columns as an int.
+	size_t size()const{return rows*columns;}///< Returns the number of elements in the Plane
+	size_t* getDimensions() const;///< gives rows and columns (in that order) in an array
 
 	/**
 	 * Draws the images as a bitmap file.
@@ -105,7 +105,7 @@ public:
 	 */
 	void draw(const std::string& fileName, bool blackAndWhite = false, bool useGrid = false, int gridSpace = 1000,double bgRed = 0, double bgGreen = 0, double bgBlue = 0) throw (DavidException);
 	
-	std::vector<T> getPlaneArray();///< returns a pointer to the plane's array.
+	const T* getPlaneArray();///< returns a pointer to the plane's array.
 	
 	/**
 	 * "Draws" the plane's data as ASCII text file. To save the plane as numerical text value, see savePlane(const char *fileName)
@@ -120,7 +120,7 @@ public:
 	 * @param value
 	 * @return bool
 	 */
-	bool isInSource(int x, int y, T value);
+	bool isInSource(size_t x, size_t y, T value);
 	
 	/**
 	 * Gives the maximum value in the plane.
@@ -243,9 +243,8 @@ public:
 	void removeHeader(){delete header;header = 0;}
 
 private:
-	int * rows;
-	int * columns;
-	std::vector<T> planeArray;
+	size_t rows, columns;
+	T *planeArray;
 	int numberOfCurves;
 	std::string * header;//Plane info if provided, otherwise null pointer
 
@@ -253,12 +252,12 @@ private:
 
 template <class T> Plane<T>::Plane()
 {
-  rows = new int;
-  columns = new int;
-  *rows = 1;
-  *columns = 1;
-  planeArray = std::vector<T>(1);
-  header = 0;
+  rows = 1;
+  columns = 1;
+  planeArray = (T*)malloc(sizeof(T));
+  if(planeArray == NULL)
+    throw DavidException("Could not allocate memory for plane array", DavidException::ALLOC_ERROR);
+  header = NULL;
 
   numberOfCurves = 0;
 
@@ -266,164 +265,134 @@ template <class T> Plane<T>::Plane()
 
 template <class T> Plane<T>::Plane(const Plane<T>& rhs)
 { 
-  rows = new int;
-  columns = new int;
-  *rows = rhs.numberOfRows();
-  *columns = rhs.numberOfColumns();
-  planeArray = std::vector<T>(*rows * *columns);
-  
-  for(int i = 0;i<*rows;i++)
-    for(int j = 0;j<*columns;j++)
-      {
-			T getTheValue = rhs.getValue(i,j);
-			setValue(i,j,getTheValue);
-      }
+  rows = rhs.numberOfRows();
+  columns = rhs.numberOfColumns();
+  if(rhs.planeArray == NULL)
+    throw DavidException("Null pointer for plane array in original object provided to copy constructor.");
+  planeArray = (T*)malloc(rows * columns);
+  if(planeArray == NULL)
+    throw DavidException("Could not allocate memory for plane array", DavidException::ALLOC_ERROR);
 
+  memcpy(planeArray,rhs.planeArray,rows*columns*sizeof(T));
+  
   if(rhs.getHeader() != 0)
     header = new std::string(*(rhs.header));
   else
-    header = 0;
+    header = NULL;
 
 }
   
 
-template <class T> Plane<T>::Plane(int _rows, int _columns, T _initialValue)
+template <class T> Plane<T>::Plane(size_t _rows, size_t _columns, T _initialValue)
 {
-  if(_rows < 0 || _columns < 0)
-    throw DavidException("Non negative dimensions are required",DavidException::INVALID_ARGUMENT_ERROR_CODE);
-
-    header = 0;
-    rows = new int;
-  columns = new int;
-  *rows = _rows;
-  *columns = _columns;
-  planeArray = std::vector<T>(_rows*_columns);
-
-  for(int i=0;i<_rows;i++)
-  {
-		for(int j=0;j<_columns;j++)
-		{
-			planeArray[j+i*_columns] = _initialValue;
-		}
- }
+  header = NULL;
+  rows = _rows;
+  columns = _columns;
+  planeArray = (T*)malloc(rows*columns*sizeof(T));
   
+  for(int i=0, size = rows*columns;i<size;i++)
+    planeArray[i] = _initialValue;
+
   numberOfCurves = 0;
-  
-  
 }
 
-template <class T> Plane<T>::Plane(std::vector<T> array, int _rows, int _columns)
+template <class T> Plane<T>::Plane(const T* array, size_t _rows, size_t _columns)
 {
-  if(_rows < 0 || _columns < 0)
-    throw DavidException("Non negative dimensions are required",DavidException::INVALID_ARGUMENT_ERROR_CODE);
-  
-
-  header = 0;
-  planeArray = array;
-  rows = new int;
-  columns = new int;
-  *rows = _rows;
-  *columns = _columns;
+  header = NULL;
+  rows = _rows;
+  columns = _columns;
+  if(array)
+    memcpy(planeArray,array,rows*columns*sizeof(T));
+  else
+    planeArray = NULL;
 }
 
 template <class T> Plane<T>::~Plane()
 {
   delete header;
-  delete this->rows;
-  delete this->columns;
-  this->rows = 0;
-  this->columns = 0;
-  this->header = 0;
+  this->header = NULL;
+  
+  if(planeArray)
+    {
+      free(planeArray);
+      planeArray = NULL;
+    }
+  
 }
 
 template <class T> void Plane<T>::setHeader(const std::string& bean)
 {
-  if(header == 0)
+  if(header == NULL)
     header = new std::string();
   
   *header = bean;
 }
 
-template <class T> int Plane<T>::numberOfRows() const {return *rows;}
+template <class T> size_t Plane<T>::numberOfRows() const {return rows;}
 
-template <class T> int Plane<T>::numberOfColumns() const {return *columns;}
+template <class T> size_t Plane<T>::numberOfColumns() const {return columns;}
 
-template <class T> int * Plane<T>::getDimensions() const
+template <class T> size_t* Plane<T>::getDimensions() const
 {
-  int * returnMe = new int[2];
+  size_t* returnMe = new size_t[2];
 
-  returnMe[0] = this->numberOfRows();
-  returnMe[1] = this->numberOfColumns();
+  returnMe[0] = this->rows;
+  returnMe[1] = this->columns;
   return returnMe;
 }
 
 template <class T> Plane<T>& Plane<T>::operator=(const Plane<T>& rhs)
 {
-  rows = new int;
-  columns = new int;
-  *rows = rhs.numberOfRows();
-  *columns = rhs.numberOfColumns();
-  planeArray = std::vector<T>(*rows * *columns);
+  rows = rhs.rows;
+  columns = rhs.columns;
+  if(rhs.planeArray == NULL)
+    throw DavidException("Null pointer for plane array in original object provided to operator= overload.");
+  planeArray = (T*)malloc(rows*columns*sizeof(T));
+  if(planeArray == NULL)
+    throw DavidException("Could not allocate memory for plane array", DavidException::ALLOC_ERROR);
+
+  memcpy(planeArray,rhs.planeArray,rows*columns*sizeof(T));
   
-  for(int i = 0;i<*rows;i++)
-    for(int j = 0;j<*columns;j++)
-      {
-		T theStuff = rhs.getValue(i,j);
-		setValue(i,j,theStuff);
-      }
-  
-  if(rhs.getHeader() != 0)
+  if(rhs.getHeader() != NULL)
     {
       header = new std::string;
       *header = *rhs.getHeader();
     }
   else
-    header = 0;
+    header = NULL;
       
   return *this;
 }
 
 template <class T> void Plane<T>::populate(const T& value)
 {
-	T newValue = value;
-	for(int i = 0;i< this->numberOfRows();i++)
-		for(int j = 0;j<this->numberOfColumns();j++)
-			this->setValue(i,j,newValue);
+  for(int i = 0;i< rows*columns;i++)
+    planeArray[i] = value;
 }
 
-template <class T> const T& Plane<T>::getValue(const int x, const int y) const
+template <class T> const T& Plane<T>::getValue(const size_t x, const size_t y) const
 {
 
-  if(x < 0 || y < 0)
+  if(x > rows || y > columns)
     {
-      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(*rows).str() + std::string(" by ") + Double(*columns).str() + ". Negative Values are not allowed",DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
+      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(rows).str() + std::string(" by ") + Double(columns).str(),DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
     }
-	
-  if(x > *rows || y > *columns)
-    {
-      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(*rows).str() + std::string(" by ") + Double(*columns).str(),DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
-    }
-  if(planeArray.size() == 0)
+  if(this->size() == 0)
     throw DavidException("Plane Array is empty.");
-  return planeArray[y+x*(*columns)];
+  return planeArray[y+x*(columns)];
 }
 
-template <class T> void Plane<T>::setValue(int x, int y, T value)
+template <class T> void Plane<T>::setValue(size_t x, size_t y, T value)
 {
 
-    if(x < 0 || y < 0)
+  if(x > rows || y > columns)
     {
-      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(*rows).str() + std::string(" by ") + Double(*columns).str() + ". Negative Values are not allowed",DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
+      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(rows).str() + std::string(" by ") + Double(columns).str(),DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
     }
-	
-  if(x > *rows || y > *columns)
-    {
-      throw DavidException(std::string("These Coordinates (") + Double(x).str() + std::string(",") + Double(y).str() + std::string(") are out side of the plane which has dimensions ") + Double(*rows).str() + std::string(" by ") + Double(*columns).str(),DavidException::PLANE_OUT_OF_BOUNDS_ERROR_CODE);
-    }
-  if(planeArray.size() == 0)
+  if(this->size() == 0)
     throw DavidException("Plane Array is empty.");
 
-  planeArray[y+x*(*columns)] = value;
+  planeArray[y+x*(columns)] = value;
 
   //return temp;
 }
@@ -436,35 +405,35 @@ template <class T> bool Plane<T>::write(const char * fileName, bool useGrid, boo
 
   if(myfile.is_open())
     {
-		if(useGrid)
-		{
-			for(int i = 0;i<(*columns);i++)
-			{
-				myfile << i % 10;
-			}
-		}
-		myfile << endl;
+      if(useGrid)
+	{
+	  for(size_t i = 0;i<columns;i++)
+	    {
+	      myfile << i % 10;
+	    }
+	}
+      myfile << endl;
 
-      for(int i = 0;i< (*rows); i++)
-	  {
-		if(useGrid)
-			myfile << i % 10;
-		for(int j = 0; j< (*columns);j++)
+      for(size_t i = 0;i< rows; i++)
+	{
+	  if(useGrid)
+	    myfile << i % 10;
+	  for(size_t j = 0; j< columns;j++)
+	    {
+	      if(j != 0)
+		myfile << "," ;
+	      if(!blackOrWhite)
 		{
-		  if(j != 0)
-			  myfile << "," ;
-		  if(!blackOrWhite)
-		  {
-			  myfile << "\"" << this->getValue(i,j) << "\"";
-		  }
+		  myfile << "\"" << this->getValue(i,j) << "\"";
+		}
+	      else
+		{
+		  if(this->getValue(i,j) == 0.0)
+		    myfile << " ";
 		  else
-		  {
-			if(this->getValue(i,j) == 0.0)
-				myfile << " ";
-			else
-				myfile << whiteSymbol;
-		  }
-	  }
+		    myfile << whiteSymbol;
+		}
+	    }
 	  myfile << endl;
 	}
       myfile.close();
@@ -476,19 +445,14 @@ template <class T> bool Plane<T>::write(const char * fileName, bool useGrid, boo
 }
 
 
-template <class T> std::vector<T> Plane<T>::getPlaneArray()
+template <class T> const T* Plane<T>::getPlaneArray()
 {
-	std::vector<T> returnMe((*rows) * (*columns));
-  for(int i = 0; i< ((*rows) * (*columns));i++)
-    returnMe[i] = planeArray[i];
-  
-  return returnMe;
-
+  return planeArray;
 }
 
-template <class T> bool Plane<T>::isInSource(int x, int y, T value)
+template <class T> bool Plane<T>::isInSource(size_t x, size_t y, T value)
 {
-	return (this->getValue(x,y) == value);
+  return (this->getValue(x,y) == value);
 }
 
 template <class T> void Plane<T>::draw(const std::string& fileName, bool blackAndWhite, bool useGrid, int gridSpace,double bgRed, double bgGreen, double bgBlue) throw (DavidException)
@@ -496,14 +460,14 @@ template <class T> void Plane<T>::draw(const std::string& fileName, bool blackAn
   #ifndef __USE_BOINC__
 	BMP image;
 
-	image.SetSize(*rows,*columns);
+	image.SetSize(rows,columns);
 	image.SetBitDepth(24);
 	
 	double currentValue = 0;//used for pixel color assignment loop
 	bool isBackground = false;//used to determine if pixel is a background color
-	for(int i = 0;i<*rows -1;i++)
+	for(size_t i = 0;i<rows -1;i++)
 	{
-		for(int j = 0;j< *columns-1;j++)
+		for(size_t j = 0;j< columns-1;j++)
 		{
 
 		  if(((i % gridSpace == 0) || (j % gridSpace == 0)) && i != 0 && j != 0 && useGrid)
@@ -516,7 +480,7 @@ template <class T> void Plane<T>::draw(const std::string& fileName, bool blackAn
 			{
 
 				Double curr = getValue(i,j);
-				for(int currIndex = 0;currIndex < 3;currIndex++)
+				for(size_t currIndex = 0;currIndex < 3;currIndex++)
 				  {
 				    
 				    if(curr.getValue(currIndex) > 255)
@@ -524,7 +488,7 @@ template <class T> void Plane<T>::draw(const std::string& fileName, bool blackAn
 				      1;DEBUG_PRINT("Warning: Setting pixel value to more than 255.");
 				    }					   
 				  }
-				for(int k = 0;k<3;k++)
+				for(size_t k = 0;k<3;k++)
 				  {
 				    currentValue = curr.getValue(k);
 				    isBackground = (curr.modulus() == 0);
@@ -573,8 +537,8 @@ template <class T> void Plane<T>::draw(const std::string& fileName, bool blackAn
 template <class T> T Plane<T>::getMaxValue()const
 {
   T returnMe = getValue(0,0);
-  for(int i = 0;i < *rows; i++)
-    for(int j = 0;j < *columns;j++)
+  for(size_t i = 0;i < rows; i++)
+    for(size_t j = 0;j < columns;j++)
       if(getValue(i,j) > returnMe)
 	returnMe = getValue(i,j);
   
@@ -584,8 +548,8 @@ template <class T> T Plane<T>::getMaxValue()const
 template <class T> T Plane<T>::getMinValue()const
 {
   T returnMe = getValue(0,0);
-  for(int i = 0;i < *rows; i++)
-    for(int j = 0;j < *columns;j++)
+  for(size_t i = 0;i < rows; i++)
+    for(size_t j = 0;j < columns;j++)
       if(getValue(i,j) < returnMe)
 	returnMe = getValue(i,j);
   
@@ -600,13 +564,13 @@ template <class T> bool Plane<T>::includeCurve(bool useCurve,double x, double y,
 
 template <class T> T Plane<T>::getTotalValue()const
 {
-	T returnMe;
+  T returnMe;
 
-	for(int i = 0;i< *rows -1;i++)
-	  for(int j = 0;j<*columns -1;j++)
-	    returnMe += this->getValue(i,j);
+  for(size_t i = 0;i< rows -1;i++)
+    for(size_t j = 0;j< columns -1;j++)
+      returnMe += this->getValue(i,j);
 
-	return returnMe;
+  return returnMe;
 
 }
 
@@ -626,8 +590,8 @@ template <class T> bool Plane<T>::savePlane(const char * fileName, bool verbose)
 	      DEBUG_PRINT(*(this->header));
 	      file << *(this->header) << endl;
 	    }
-	  file << *rows << endl;
-	  file << *columns << endl;
+	  file << rows << endl;
+	  file << columns << endl;
 
 	  T outputT;
 	  using namespace std;
@@ -637,9 +601,9 @@ template <class T> bool Plane<T>::savePlane(const char * fileName, bool verbose)
 	  if(verbose)
 	    printf("Saving Plane:\n");
 	  
-	  for(int i = 0;i< *rows;i++)
+	  for(int i = 0;i< rows;i++)
 	    {
-	      for(int j = 0;j<*columns;j++)
+	      for(int j = 0;j<columns;j++)
 		{
 		  outputT = getValue(i,j);
 		  tempString = outputT.str(stream);
@@ -647,9 +611,9 @@ template <class T> bool Plane<T>::savePlane(const char * fileName, bool verbose)
 		  stream.str("");
 		  stream.clear();
 		}
-	      if(verbose && (i*100/(*rows)) >= (percentFinished+5))
+	      if(verbose && (i*100/(rows)) >= (percentFinished+5))
 		{
-		  percentFinished = (int) i*100/(*rows);
+		  percentFinished = (int) i*100/(rows);
 		  printf("Percent finished: %f\n",percentFinished);
 		}
 	    }
@@ -670,7 +634,7 @@ template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
   if(filename == NULL)
     return false;
   
-  temparray = (double*)malloc(sizeof(double)*(*this->rows)*(*this->columns));
+  temparray = (double*)malloc(sizeof(double)*(rows)*(columns));
   if(temparray == NULL)
     throw DavidException("Could not allocate memory for writeCDF");
   
@@ -683,14 +647,14 @@ template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
     }
   
   /* Define the dimensions. NetCDF will hand back an ID for each. */
-   if ((retval = nc_def_dim(ncid, PLANE_XDIM_NAME, *this->rows, &x_dimid)))
+   if ((retval = nc_def_dim(ncid, PLANE_XDIM_NAME, rows, &x_dimid)))
      {
        free(temparray);
        std::string error = "Error defining x dimension for NetCDF file in writeCDF.\n";
        error += nc_strerror(retval);
        throw DavidException(error);
      }
-   if ((retval = nc_def_dim(ncid, PLANE_YDIM_NAME, *this->columns, &y_dimid)))
+   if ((retval = nc_def_dim(ncid, PLANE_YDIM_NAME, this->columns, &y_dimid)))
      {
        free(temparray);
        std::string error = "Error defining y dimension for NetCDF file in writeCDF.\n";
@@ -724,7 +688,7 @@ template<class T> bool Plane<T>::writeCDF(const char* filename, bool verbose)
      }
 
    Double tmp;
-   for(int i = 0, size = (*this->rows)*(*this->columns);i< size;i++)
+   for(int i = 0, size = (rows)*(columns);i< size;i++)
      {
        tmp = this->planeArray[i];
        temparray[i] = tmp.doubleValue();
@@ -795,8 +759,8 @@ template <class T> Plane<T> * Plane<T>::readPlane(const char * fileName)
 		float percentFinished = 0.;
 		printf("Reading Plane:\n");
 		char testChar;
-		for(int i = 0;i< newPlanePointer->numberOfRows();i++)
-			for(int j = 0;j< newPlanePointer->numberOfColumns();j++)
+		for(size_t i = 0;i< tmpR;i++)
+		  for(size_t j = 0;j< tmpC;j++)
 			{
 			  counter++;
 			  string = "#";
@@ -839,7 +803,6 @@ template <class T> Plane<T>* Plane<T>::loadCDF(const char* filename, bool verbos
 {
   int status, recid, ncid, xid, yid;
   size_t xdim,ydim,size;
-  char recname[NC_MAX_NAME+1];
   double *temparray = NULL;
   Plane<T> *new_plane_ptr = NULL;
   
@@ -899,8 +862,6 @@ template <class T> Plane<T>* Plane<T>::loadCDF(const char* filename, bool verbos
 	 throw DavidException(error);
        }
 
-     printf("Have dimensions %d by %d\n",xdim,ydim);
-     
      status = nc_inq_varid(ncid, PLANE_DATA_NAME, &recid);
      if (status != NC_NOERR)
        {
@@ -962,8 +923,8 @@ template <class T> Plane<Double> * Plane<T>::bmpToPlane(const char * fileName)
 
   Plane<Double> * newPlane = new Plane<Double>(width,height,zero);
   
-  for(int i = 0; i<width-1;i++)
-    for(int j = 0;j<height-1;j++)
+  for(size_t i = 0; i<width-1;i++)
+    for(size_t j = 0;j<height-1;j++)
       {
 		double value = 0;
 		double value2 = 0;
@@ -1006,15 +967,15 @@ template<class T> Plane<T> * Plane<T>::addPlanes(Plane<T> * left, Plane<T> * rig
       throw DavidException(errorMessage);
     }
 
-  int rows = left->numberOfRows();
-  int columns = left->numberOfColumns();
+  size_t rows = left->rows;
+  size_t columns = left->columns;
 
   T newT;
-  Plane<T> * returnMe = new Plane<T>(rows, columns, newT);
+  Plane<T>* returnMe = new Plane<T>(rows, columns, newT);
 
 
-  for(int i = 0; i<rows;i++)
-    for(int j = 0; j<columns;j++)
+  for(size_t i = 0; i<rows;i++)
+    for(size_t j = 0; j<columns;j++)
       {
 	T temp(left->getValue(i,j)+right->getValue(i,j));
 	returnMe->setValue(i,j,temp);
@@ -1032,14 +993,14 @@ template <class T> Plane<T> * Plane<T>::subtractPlanes(Plane<T> * left, Plane<T>
   if(left->numberOfRows() != right->numberOfRows())
     throw DavidException("Number of Rows don't match");
 
-  int rows = left->numberOfRows();
-  int columns = left->numberOfColumns();
+  size_t rows = left->numberOfRows();
+  size_t columns = left->numberOfColumns();
 
   T newT;
   Plane<T> * returnMe = new Plane<T>(rows, columns, newT);
   
-  for(int i = 0; i<rows;i++)
-    for(int j = 0; j<columns;j++)
+  for(size_t i = 0; i<rows;i++)
+    for(size_t j = 0; j<columns;j++)
       {
 	T temp = left->getValue(i,j)-right->getValue(i,j);
 	returnMe->setValue(i,j,temp);
@@ -1054,8 +1015,8 @@ template <class T> Plane<T> * Plane<T>::transpose()
 
   Plane<T> * returnMe = new Plane<T>(this->numberOfColumns(),this->numberOfRows(),curr);
 
-  for(int i = 0;i<*rows;i++)
-    for(int j = 0;j<*columns;j++)
+  for(size_t i = 0;i<rows;i++)
+    for(size_t j = 0;j<columns;j++)
       {
 	curr = this->getValue(i,j);
 	returnMe->setValue(j,i,curr);
