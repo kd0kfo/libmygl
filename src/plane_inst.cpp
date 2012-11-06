@@ -160,8 +160,6 @@ template<> bool Plane<Double>::writeCDF(const char* filename, bool verbose)
        throw DavidException(error);
      }
 
-   printf("test2!!!\n");
-
    return true;
   
 }
@@ -274,8 +272,6 @@ template<> bool Plane<math::Complex>::writeCDF(const char* filename, bool verbos
        error += nc_strerror(retval);
        throw DavidException(error);
      }
-
-   printf("test2!!!\n");
 
    return true;
   
