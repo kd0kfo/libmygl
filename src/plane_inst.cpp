@@ -281,6 +281,266 @@ template<> bool Plane<math::Complex>::writeCDF(const char* filename, bool verbos
   
 }
 
+template <> Plane<Double>* Plane<Double>::loadCDF(const char* filename, bool verbose)
+{
+  int status, realid, imagid, zid, ncid, xid, yid;
+  size_t xdim,ydim,size;
+  double *temparray = NULL;
+  Plane<Double> *new_plane_ptr = NULL;
+  
+  status = nc_open(filename, NC_NOWRITE, &ncid); 
+  if (status != NC_NOERR) 
+    {
+      std::string error = "Error opening NetCDF file in loadCDF.";
+      error += nc_strerror(status);
+      throw DavidException(error);
+    }
+
+     status = nc_inq_dimid(ncid, PLANE_XDIM_NAME, &xid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension (";
+	 error += PLANE_XDIM_NAME;
+	 error += ") id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_dimlen(ncid, xid, &xdim);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension (";
+	 error += PLANE_XDIM_NAME; 
+	 error += ") NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+     
+      status = nc_inq_dimid(ncid, PLANE_YDIM_NAME, &yid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension ("; 
+	 error += PLANE_YDIM_NAME; 
+	 error += ") id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_dimlen(ncid, yid, &ydim);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension (";
+	 error += PLANE_YDIM_NAME;
+	 error += ") NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_varid(ncid, PLANE_REALDATA_NAME, &realid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_varid(ncid, PLANE_IMAGDATA_NAME, &imagid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_varid(ncid, PLANE_ZDATA_NAME, &zid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     size = xdim*ydim*sizeof(double);
+     temparray = (double*)malloc(size);
+     if(temparray == NULL)
+       {
+	 std::string error = "Error allocating memory for array in loadCDF.\n";
+	 if(errno)
+	   error += strerror(errno);
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_get_var_double(ncid, realid, temparray);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 free(temparray);
+	 throw DavidException(error);
+       }
+
+     new_plane_ptr = new Plane<Double>(xdim,ydim,0.0);
+     if(new_plane_ptr == NULL)
+       {
+	 std::string error = "Error allocating memory for array in loadCDF.\n";
+	 if(errno)
+	   error += strerror(errno);
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+     for(int i = 0;i<xdim*ydim;i++)
+       new_plane_ptr->planeArray[i].setValue(0,temparray[i]);
+
+     status = nc_get_var_double(ncid, imagid, temparray);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 free(temparray);
+	 throw DavidException(error);
+       }
+     for(int i = 0;i<xdim*ydim;i++)
+       new_plane_ptr->planeArray[i].setValue(1,temparray[i]);
+
+     status = nc_get_var_double(ncid, zid, temparray);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 free(temparray);
+	 throw DavidException(error);
+       }
+     for(int i = 0;i<xdim*ydim;i++)
+       new_plane_ptr->planeArray[i].setValue(2,temparray[i]);
+
+     free(temparray);
+     return new_plane_ptr;
+}
+
+template <> Plane<math::Complex>* Plane<math::Complex>::loadCDF(const char* filename, bool verbose)
+{
+  int status, realid, imagid, ncid, xid, yid;
+  size_t xdim,ydim,size;
+  double *temparray = NULL;
+  Plane<math::Complex> *new_plane_ptr = NULL;
+  
+  status = nc_open(filename, NC_NOWRITE, &ncid); 
+  if (status != NC_NOERR) 
+    {
+      std::string error = "Error opening NetCDF file in loadCDF.";
+      error += nc_strerror(status);
+      throw DavidException(error);
+    }
+
+     status = nc_inq_dimid(ncid, PLANE_XDIM_NAME, &xid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension (";
+	 error += PLANE_XDIM_NAME;
+	 error += ") id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_dimlen(ncid, xid, &xdim);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension (";
+	 error += PLANE_XDIM_NAME; 
+	 error += ") NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+     
+      status = nc_inq_dimid(ncid, PLANE_YDIM_NAME, &yid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension ("; 
+	 error += PLANE_YDIM_NAME; 
+	 error += ") id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_dimlen(ncid, yid, &ydim);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting dimension (";
+	 error += PLANE_YDIM_NAME;
+	 error += ") NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_varid(ncid, PLANE_REALDATA_NAME, &realid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_inq_varid(ncid, PLANE_IMAGDATA_NAME, &imagid);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data id from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+
+     size = xdim*ydim*sizeof(double);
+     temparray = (double*)malloc(size);
+     if(temparray == NULL)
+       {
+	 std::string error = "Error allocating memory for array in loadCDF.\n";
+	 if(errno)
+	   error += strerror(errno);
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+
+     status = nc_get_var_double(ncid, realid, temparray);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 free(temparray);
+	 throw DavidException(error);
+       }
+
+     new_plane_ptr = new Plane<math::Complex>(xdim,ydim,0.0);
+     if(new_plane_ptr == NULL)
+       {
+	 std::string error = "Error allocating memory for array in loadCDF.\n";
+	 if(errno)
+	   error += strerror(errno);
+	 error += nc_strerror(status);
+	 throw DavidException(error);
+       }
+     for(int i = 0;i<xdim*ydim;i++)
+       {
+	 new_plane_ptr->planeArray[i].setValue(0,temparray[i]);
+       }
+
+     status = nc_get_var_double(ncid, imagid, temparray);
+     if (status != NC_NOERR)
+       {
+	 std::string error = "Error getting data from NetCDF file in loadCDF.\n";
+	 error += nc_strerror(status);
+	 free(temparray);
+	 throw DavidException(error);
+       }
+     for(int i = 0;i<xdim*ydim;i++)
+       {
+	 new_plane_ptr->planeArray[i].setValue(1,temparray[i]);
+       }
+
+     free(temparray);
+     return new_plane_ptr;
+}
+
 
 //end specializations
 

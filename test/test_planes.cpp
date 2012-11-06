@@ -36,6 +36,7 @@ void load_cdf()
 {
   Plane<math::Complex> *empty_plane = NULL;
   empty_plane = Plane<math::Complex>::loadCDF("test.nc");
+  //Plane<Double> *empty_plane = Plane<Double>::loadCDF("test.nc");
   printf("Loaded NetCDF\n");
   if(empty_plane)
     delete empty_plane;
