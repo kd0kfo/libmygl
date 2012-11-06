@@ -75,7 +75,8 @@ libmygl_a_LIBADD =
 am_libmygl_a_OBJECTS = libmygl_a-Cosmology.$(OBJEXT) \
 	libmygl_a-densityprofile.$(OBJEXT) \
 	libmygl_a-glellipse.$(OBJEXT) libmygl_a-shearimage.$(OBJEXT) \
-	libmygl_a-planecreator.$(OBJEXT) libmygl_a-EasyBMP.$(OBJEXT)
+	libmygl_a-planecreator.$(OBJEXT) libmygl_a-EasyBMP.$(OBJEXT) \
+	libmygl_a-plane_inst.$(OBJEXT)
 libmygl_a_OBJECTS = $(am_libmygl_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -193,7 +194,7 @@ top_srcdir = @top_srcdir@
 lib_LIBRARIES = libmygl.a
 libmygl_adir = $(libdir)
 libmygl_a_CPPFLAGS = $(EASYBMP_CPPFLAGS) $(DNSTD_CPPFLAGS) $(NETCDF_CPPFLAGS)
-libmygl_a_SOURCES = Cosmology.cpp densityprofile.cpp glellipse.cpp shearimage.cpp planecreator.cpp EasyBMP/EasyBMP.cpp #plane_inst.cpp
+libmygl_a_SOURCES = Cosmology.cpp densityprofile.cpp glellipse.cpp shearimage.cpp planecreator.cpp EasyBMP/EasyBMP.cpp plane_inst.cpp
 libmygl_a_includedir = $(includedir)/libmygl
 nobase_libmygl_a_include_HEADERS = Cosmology.h densityprofile.h glellipse.h shearimage.h plane.h planecreator.h spl.h  plane_inst.h EasyBMP/EasyBMP.h EasyBMP/EasyBMP_BMP.h EasyBMP/EasyBMP_DataStructures.h  EasyBMP/EasyBMP_VariousBMPutilities.h structs.h
 all: all-am
@@ -277,6 +278,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-EasyBMP.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-densityprofile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-glellipse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-plane_inst.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-planecreator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-shearimage.Po@am__quote@
 
@@ -377,6 +379,20 @@ libmygl_a-EasyBMP.obj: EasyBMP/EasyBMP.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EasyBMP/EasyBMP.cpp' object='libmygl_a-EasyBMP.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmygl_a-EasyBMP.obj `if test -f 'EasyBMP/EasyBMP.cpp'; then $(CYGPATH_W) 'EasyBMP/EasyBMP.cpp'; else $(CYGPATH_W) '$(srcdir)/EasyBMP/EasyBMP.cpp'; fi`
+
+libmygl_a-plane_inst.o: plane_inst.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmygl_a-plane_inst.o -MD -MP -MF $(DEPDIR)/libmygl_a-plane_inst.Tpo -c -o libmygl_a-plane_inst.o `test -f 'plane_inst.cpp' || echo '$(srcdir)/'`plane_inst.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libmygl_a-plane_inst.Tpo $(DEPDIR)/libmygl_a-plane_inst.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='plane_inst.cpp' object='libmygl_a-plane_inst.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmygl_a-plane_inst.o `test -f 'plane_inst.cpp' || echo '$(srcdir)/'`plane_inst.cpp
+
+libmygl_a-plane_inst.obj: plane_inst.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmygl_a-plane_inst.obj -MD -MP -MF $(DEPDIR)/libmygl_a-plane_inst.Tpo -c -o libmygl_a-plane_inst.obj `if test -f 'plane_inst.cpp'; then $(CYGPATH_W) 'plane_inst.cpp'; else $(CYGPATH_W) '$(srcdir)/plane_inst.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libmygl_a-plane_inst.Tpo $(DEPDIR)/libmygl_a-plane_inst.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='plane_inst.cpp' object='libmygl_a-plane_inst.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmygl_a-plane_inst.obj `if test -f 'plane_inst.cpp'; then $(CYGPATH_W) 'plane_inst.cpp'; else $(CYGPATH_W) '$(srcdir)/plane_inst.cpp'; fi`
 install-nobase_libmygl_a_includeHEADERS: $(nobase_libmygl_a_include_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(libmygl_a_includedir)" || $(MKDIR_P) "$(DESTDIR)$(libmygl_a_includedir)"

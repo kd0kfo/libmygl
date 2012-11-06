@@ -25,9 +25,10 @@ void read_plane()
 void write_cdf()
 {
   math::Complex init(12,34);
-  Plane<math::Complex> complex_plane(5,5,init);
-  
-  complex_plane.writeCDF("test.nc");
+  //Plane<math::Complex> complex_plane(5,5,init);
+  Plane<Double> complex_plane(5,5,init);
+  std::string name = "test.nc";
+  complex_plane.writeCDF(name);
   printf("Write NetCDF\n");
 }
 
