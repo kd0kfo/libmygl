@@ -76,7 +76,7 @@ am_libmygl_a_OBJECTS = libmygl_a-Cosmology.$(OBJEXT) \
 	libmygl_a-densityprofile.$(OBJEXT) \
 	libmygl_a-glellipse.$(OBJEXT) libmygl_a-shearimage.$(OBJEXT) \
 	libmygl_a-planecreator.$(OBJEXT) libmygl_a-EasyBMP.$(OBJEXT) \
-	libmygl_a-plane_inst.$(OBJEXT)
+	libmygl_a-plane_inst.$(OBJEXT) libmygl_a-version.$(OBJEXT)
 libmygl_a_OBJECTS = $(am_libmygl_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -140,7 +140,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
-PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -194,9 +193,9 @@ top_srcdir = @top_srcdir@
 lib_LIBRARIES = libmygl.a
 libmygl_adir = $(libdir)
 libmygl_a_CPPFLAGS = $(EASYBMP_CPPFLAGS) $(DNSTD_CPPFLAGS) $(NETCDF_CPPFLAGS)
-libmygl_a_SOURCES = Cosmology.cpp densityprofile.cpp glellipse.cpp shearimage.cpp planecreator.cpp EasyBMP/EasyBMP.cpp plane_inst.cpp
+libmygl_a_SOURCES = Cosmology.cpp densityprofile.cpp glellipse.cpp shearimage.cpp planecreator.cpp EasyBMP/EasyBMP.cpp plane_inst.cpp version.cpp
 libmygl_a_includedir = $(includedir)/libmygl
-nobase_libmygl_a_include_HEADERS = Cosmology.h densityprofile.h glellipse.h shearimage.h plane.h planecreator.h spl.h  plane_inst.h EasyBMP/EasyBMP.h EasyBMP/EasyBMP_BMP.h EasyBMP/EasyBMP_DataStructures.h  EasyBMP/EasyBMP_VariousBMPutilities.h structs.h
+nobase_libmygl_a_include_HEADERS = Cosmology.h densityprofile.h glellipse.h shearimage.h plane.h planecreator.h spl.h  plane_inst.h EasyBMP/EasyBMP.h EasyBMP/EasyBMP_BMP.h EasyBMP/EasyBMP_DataStructures.h  EasyBMP/EasyBMP_VariousBMPutilities.h structs.h version.h
 all: all-am
 
 .SUFFIXES:
@@ -281,6 +280,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-plane_inst.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-planecreator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-shearimage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmygl_a-version.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -393,6 +393,20 @@ libmygl_a-plane_inst.obj: plane_inst.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='plane_inst.cpp' object='libmygl_a-plane_inst.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmygl_a-plane_inst.obj `if test -f 'plane_inst.cpp'; then $(CYGPATH_W) 'plane_inst.cpp'; else $(CYGPATH_W) '$(srcdir)/plane_inst.cpp'; fi`
+
+libmygl_a-version.o: version.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmygl_a-version.o -MD -MP -MF $(DEPDIR)/libmygl_a-version.Tpo -c -o libmygl_a-version.o `test -f 'version.cpp' || echo '$(srcdir)/'`version.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libmygl_a-version.Tpo $(DEPDIR)/libmygl_a-version.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='version.cpp' object='libmygl_a-version.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmygl_a-version.o `test -f 'version.cpp' || echo '$(srcdir)/'`version.cpp
+
+libmygl_a-version.obj: version.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmygl_a-version.obj -MD -MP -MF $(DEPDIR)/libmygl_a-version.Tpo -c -o libmygl_a-version.obj `if test -f 'version.cpp'; then $(CYGPATH_W) 'version.cpp'; else $(CYGPATH_W) '$(srcdir)/version.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libmygl_a-version.Tpo $(DEPDIR)/libmygl_a-version.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='version.cpp' object='libmygl_a-version.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmygl_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmygl_a-version.obj `if test -f 'version.cpp'; then $(CYGPATH_W) 'version.cpp'; else $(CYGPATH_W) '$(srcdir)/version.cpp'; fi`
 install-nobase_libmygl_a_includeHEADERS: $(nobase_libmygl_a_include_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(libmygl_a_includedir)" || $(MKDIR_P) "$(DESTDIR)$(libmygl_a_includedir)"
@@ -618,6 +632,12 @@ uninstall-am: uninstall-libLIBRARIES \
 	uninstall-am uninstall-libLIBRARIES \
 	uninstall-nobase_libmygl_a_includeHEADERS
 
+
+version.cpp: 
+	git rev-parse HEAD | awk ' BEGIN {print "#include \"version.h\""} {print "const char * libmygl::build_git_sha = \"" $$0"\";"} END {}' > version.cpp
+	date | awk 'BEGIN {} {print "const char * libmygl::build_git_time = \""$$0"\";"} END {} ' >> version.cpp
+
+.PHONY: version.cpp
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
