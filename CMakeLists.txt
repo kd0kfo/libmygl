@@ -30,4 +30,6 @@ target_link_libraries(mygl dnstd)
 
 install(TARGETS mygl DESTINATION lib)
 FILE(GLOB headers "${PROJECT_SOURCE_DIR}/src/*.h")
+FILE(GLOB easybmp_headers "${PROJECT_SOURCE_DIR}/src/EasyBMP/*.h")
 install(FILES ${headers} DESTINATION include/libmygl)
+install(FILES ${easybmp_headers} DESTINATION include/libmygl/EasyBMP)
