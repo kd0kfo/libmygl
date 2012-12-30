@@ -1,0 +1,4 @@
+#include "version.h"
+
+const char * libmygl::build_git_sha = "@BUILD_GIT_SHA@";
+const char * libmygl::build_git_time = "@BUILD_TIME@";
