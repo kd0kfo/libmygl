@@ -27,7 +27,6 @@ configure_file("${PROJECT_SOURCE_DIR}/src/version.cpp.in" "${PROJECT_SOURCE_DIR}
 add_library(mygl ${PROJECT_SOURCE_DIR}/src/Cosmology.cpp ${PROJECT_SOURCE_DIR}/src/densityprofile.cpp ${PROJECT_SOURCE_DIR}/src/glellipse.cpp ${PROJECT_SOURCE_DIR}/src/shearimage.cpp ${PROJECT_SOURCE_DIR}/src/planecreator.cpp ${PROJECT_SOURCE_DIR}/src/EasyBMP/EasyBMP.cpp ${PROJECT_SOURCE_DIR}/src/plane_inst.cpp ${PROJECT_SOURCE_DIR}/src/version.cpp)
 target_link_libraries(mygl dnstd)
 
-
 install(TARGETS mygl DESTINATION lib)
 FILE(GLOB headers "${PROJECT_SOURCE_DIR}/src/*.h")
 FILE(GLOB easybmp_headers "${PROJECT_SOURCE_DIR}/src/EasyBMP/*.h")
