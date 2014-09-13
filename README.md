@@ -20,6 +20,7 @@ be downloaded at https://github.com/kd0kfo/libdnstd.
 
 Since version 2.3, NetCDF is required to read and write Plane files. NetCDF is freely available here: http://www.unidata.ucar.edu/software/netcdf/
 
+If either libdnstd or netcdf are installed in a non-standard location, e.g. not in /usr, their paths may be passed to CMake using the cmake flags, -DDNSTD_DIR=<path> and -DNETCDF_DIR=<path>, respectively.
 
 License
 -------
