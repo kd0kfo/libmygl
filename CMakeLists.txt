@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
 
 project(MYGL CXX)
 set(MYGL_MAJOR_VERSION 2)
@@ -6,13 +6,11 @@ set(MYGL_MINOR_VERSION 3)
 set(MYGL_REVISION 0)
 set(AUTHOR_EMAIL david@davecoss.com)
 
-option(DNSTD_DIR "Include libdnstd" OFF)
 if(DNSTD_DIR)
    include_directories(${DNSTD_DIR}/include)
    link_directories(${DNSTD_DIR}/lib)
 endif(DNSTD_DIR)
 
-option(NETCDF_DIR "Include netcdf" OFF)
 if(NETCDF_DIR)
    include_directories(${NETCDF_DIR}/include)
    link_directories(${NETCDF_DIR}/lib)
